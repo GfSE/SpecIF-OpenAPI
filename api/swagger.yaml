@@ -1,0 +1,1321 @@
+swagger: '2.0'
+info:
+  version: v1.0
+  title: SpecIF API
+  description: Web API for the Specification Integration Facility (SpecIF).
+  contact:
+    name: Gesellschaft für Systems Engineering (GfSE) e.V.
+    url: 'https://specif.de'
+  license:
+    name: Apache License 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+paths:
+  /specif/v1.0/data-types:
+    get:
+      tags:
+        - DataType
+      summary: Returns all data types with all available revisions.
+      operationId: '{DD9B1B7F-8590-4D7C-BA1A-CA7B29E8C2F2}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: List of data types suceessfull returned.
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/DataType'
+  '/specif/v1.0/data-types/{id}':
+    get:
+      tags:
+        - DataType
+      summary: Returns the latest revision of the data type with the given ID.
+      operationId: '{E4F3BFAC-F7FB-4520-8E0D-573E67E30B09}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The data type ID.
+          required: true
+          type: string
+      responses:
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/data-types/{id}/revisions':
+    get:
+      tags:
+        - DataType
+      summary: Returns all data type revisions for the given id.
+      operationId: '{390AC1DE-B0B2-4B46-9C82-64F726E4297D}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/DataType'
+  '/specif/v1.0/data-types/{id}/revisions/{revision}':
+    get:
+      tags:
+        - DataType
+      summary: Returns the statement class with the specific revision.
+      operationId: '{056899F6-DF57-4C93-BC65-65756F0C548D}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The statement class ID.
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: The statement class revision.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/DataType'
+        '404':
+          description: Not Found
+  /specif/v1.0/hierarchies:
+    get:
+      tags:
+        - Hierarchy
+      summary: Get all hierarchies.
+      operationId: '{E39E9E69-3D03-444E-BA3F-94A4FCBD64EF}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Node'
+    put:
+      tags:
+        - Hierarchy
+      summary: Update an existing hierarchy.
+      operationId: '{CB9770FC-51C3-4A59-8721-0D2D7A16E889}'
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: hierarchy
+          in: body
+          description: ''
+          required: false
+          schema:
+            $ref: '#/definitions/Node'
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - Hierarchy
+      summary: Add a new hierarchy.
+      operationId: '{38767365-6AE8-478E-99E5-5D15B9FA373D}'
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: hierarchy
+          in: body
+          description: ''
+          required: false
+          schema:
+            $ref: '#/definitions/Node'
+      responses:
+        '200':
+          description: Success
+  '/specif/v1.0/hierarchies/{id}':
+    get:
+      tags:
+        - Hierarchy
+      summary: Get hierarchy with a specific ID.
+      operationId: '{B0D375B8-B74F-407F-93B0-2D6D3E7A41B5}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The hierarchy ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Node'
+  /specif/v1.0/nodes/root-nodes:
+    get:
+      tags:
+        - Node
+      summary: Returns all available root nodes.
+      operationId: '{0B852224-C7A9-4033-8D2D-6F7496A9B406}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Node'
+  '/specif/v1.0/nodes/{parentNodeId}/child-nodes':
+    get:
+      tags:
+        - Node
+      summary: Returns one level of child nodes for a parent node.
+      operationId: '{37F661E2-B68B-4216-819B-39A73A658A7E}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: parentNodeId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Node'
+  '/specif/v1.0/nodes/parent/{parentNodeId}':
+    post:
+      tags:
+        - Node
+      summary: Add a new node to a parent node with given ID.
+      operationId: '{6ED6BA02-F728-40B4-9397-0C28F897347F}'
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: parentNodeId
+          in: path
+          description: The parent node ID.
+          required: true
+          type: string
+        - name: node
+          in: body
+          description: The new child node.
+          required: false
+          schema:
+            $ref: '#/definitions/Node'
+      responses:
+        '200':
+          description: Success
+  /specif/v1.0/nodes:
+    put:
+      tags:
+        - Node
+      summary: Updates an existing node.
+      operationId: '{77078CD1-7905-4866-B799-3AEBF9E447A0}'
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: node
+          in: body
+          description: The node to update.
+          required: false
+          schema:
+            $ref: '#/definitions/Node'
+      responses:
+        '201':
+          description: Success
+  '/specif/v1.0/nodes/{id}':
+    delete:
+      tags:
+        - Node
+      summary: Delete a node with the given ID.
+      operationId: '{7F14E8B8-D9FE-402B-8E3C-14520D52876A}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The node ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+  '/specif/v1.0/nodes/move/{nodeId}/to/{newParentId}/position/{position}':
+    put:
+      tags:
+        - Node
+      summary: Moves an existion node and all child nodes to a new parent.
+      operationId: '{FC0EF587-8E82-41B6-9149-4EF87EE21E6F}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: nodeId
+          in: path
+          description: The id of the node to move.
+          required: true
+          type: string
+        - name: newParentId
+          in: path
+          description: The id of the new parent.
+          required: true
+          type: string
+        - name: position
+          in: path
+          description: The desired node position.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+  /specif/v1.0/primitive-types:
+    get:
+      tags:
+        - PrimitiveTypes
+      summary: Returns a list with the names of the available primitive types.
+      operationId: '{F5C716B4-D0B2-4592-9E7D-490D06DDB7F1}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: List of primitive types suceessfull returned.
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              type: string
+  /specif/v1.0/property-classes:
+    get:
+      tags:
+        - PropertyClass
+      summary: Returns all property classes with alll available revisions.
+      operationId: '{2B0A5F0B-7AB8-4360-849B-2BC923D95478}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/PropertyClass'
+        '400':
+          description: Bad Request
+  '/specif/v1.0/property-classes/{id}':
+    get:
+      tags:
+        - PropertyClass
+      summary: Returns the main/latest revision of the property class with the given ID.
+      operationId: '{AEA2CA31-5BFD-4B20-BD83-85803E44F621}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PropertyClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/property-classes/{id}/revisions':
+    get:
+      tags:
+        - PropertyClass
+      summary: Returns all property class revisions for the given id.
+      operationId: '{8908A80F-309A-4703-AE33-FF6EC6895679}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/PropertyClass'
+  '/specif/v1.0/property-classes/{id}/revisions/{revision}':
+    get:
+      tags:
+        - PropertyClass
+      summary: Returns the property class with the specific revision.
+      operationId: '{82D11D0F-3272-4DDE-91EB-7D1C2101D511}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The property class ID.
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: The property class revision.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/StatementClass'
+        '404':
+          description: Not Found
+  '/specif/v1.0/resources/{id}':
+    get:
+      tags:
+        - Resource
+      summary: Returns the latest version of the resource with the given ID.
+      operationId: '{80549B22-4BAA-4DF6-821E-731DD3D7DDAA}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The resource ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Resource'
+  '/specif/v1.0/resources/{id}/revisions':
+    get:
+      tags:
+        - Resource
+      summary: Returns a list of all revisions for the resource with the given ID.
+      operationId: '{04426F5F-4506-4A81-AC16-4DD56906744F}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Resource'
+  '/specif/v1.0/resources/{id}/revisions/{revision}':
+    get:
+      tags:
+        - Resource
+      summary: Returns a specific revision for the resource with the given ID.
+      operationId: '{72B5AD9B-BB05-48F8-8BA8-1414B2876B04}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Resource'
+  '/specif/v1.0/resources/{id}/branches/{branch}':
+    get:
+      tags:
+        - Resource
+      summary: Returns the latest revision for the resource with the given ID in the given branch.
+      operationId: '{A4A3494E-77BA-4472-9781-43604F265250}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: branch
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Resource'
+  /specif/v1.0/resources:
+    post:
+      tags:
+        - Resource
+      summary: Adds a new resource to the SpecIF repository.
+      operationId: '{31B99DC1-E3DF-4D68-A42A-8537BCF58576}'
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: resource
+          in: body
+          description: ''
+          required: false
+          schema:
+            $ref: '#/definitions/Resource'
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Resource'
+  /specif/v1.0/resource-classes:
+    get:
+      tags:
+        - ResourceClass
+      summary: Returns all resource classes with all available revisions.
+      operationId: '{61E9367B-1147-440C-8A66-EEC08D80D32B}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/ResourceClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/resource-classes/{id}':
+    get:
+      tags:
+        - ResourceClass
+      summary: Returns the main/latest revision of the resource class with the given ID.
+      operationId: '{EB830353-9D49-46B4-A4A6-5BA8D3F8966F}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ResourceClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/resource-classes/{id}/revisions':
+    get:
+      tags:
+        - ResourceClass
+      summary: Returns all resource class revisions for the given id.
+      operationId: '{DA361BE8-6AB3-43BB-8845-8B569F2326CB}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/ResourceClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/resource-classes/{id}/revisions/{revision}':
+    get:
+      tags:
+        - ResourceClass
+      summary: Returns the resource class with the specific revision.
+      operationId: '{0475696B-A583-49A2-9EA9-7FF44607F982}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The resource class ID.
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: The resource class revision.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ResourceClass'
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/{id}':
+    get:
+      tags:
+        - Statement
+      summary: Returns the main/latest revision of the statement nwith the given ID.
+      operationId: '{12914317-C04E-4FB8-84AF-45DB95083F04}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Statement'
+  '/specif/v1.0/statements/{id}/revisions':
+    get:
+      tags:
+        - Statement
+      summary: Returns all available revisions for the statement wit the given ID.
+      operationId: '{F3BF44DD-A770-497F-A9DF-0A07C86F6760}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The statement id.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Resource'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/{id}/revisions/{revision}':
+    get:
+      tags:
+        - Statement
+      summary: Returns a specific revision for the statement with the given id.
+      operationId: '{32E78708-579F-4092-8A1A-87D5ACC340A4}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The statement id.
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: The statement revision.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/subject/{subjectId}':
+    get:
+      tags:
+        - Statement
+      summary: Returns all statements for the subject resource with the given ID and the main/latest subject revision.
+      operationId: '{7BED120E-7D34-4C2D-97CC-F71696756DC6}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: subjectId
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/object/{objectId}':
+    get:
+      tags:
+        - Statement
+      summary: Returns all statements for the object resource with the given ID and the main/latest object revision.
+      operationId: '{36181124-53FE-40B8-B181-2AEB8ED2D80B}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/subject/{subjectId}/subject-revision/{revision}':
+    get:
+      tags:
+        - Statement
+      summary: Returns all statements for the subject resource with the given ID and the given subject revision.
+      operationId: '{70691363-CCCC-42C5-923C-01E389B67BA0}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: subjectId
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/object/{objectId}/object-revision/{revision}':
+    get:
+      tags:
+        - Statement
+      summary: Returns all statements for the object resource with the given ID and the given object revision.
+      operationId: '{9D5A2D5E-DA38-4133-97AF-222F5A488E06}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/resource/{resourceId}':
+    get:
+      tags:
+        - Statement
+      summary: Returns all statements for a resource with a given ID and main/latest revision - resource is uses as subject OR object for the statement.
+      operationId: '{91124BAC-0239-4E73-8A9B-45069346B4E7}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: resourceId
+          in: path
+          description: The resource element ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/resource/{resourceId}/resource-revision/{revision}':
+    get:
+      tags:
+        - Statement
+      summary: Returns all statements for a resource with a given ID and teh given revision - resource is uses as subject OR object for the statement.
+      operationId: '{63856D94-4DFB-4FC7-B2B5-F9F961847BF8}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: resourceId
+          in: path
+          description: The resource element ID.
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: The resource element revision.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  /specif/v1.0/statements:
+    post:
+      tags:
+        - Statement
+      summary: 'Add a new statement. If a statement with the given ID is still existant, a new revision is created automatically.'
+      operationId: '{E1450BE9-B21F-4C12-8B53-66FEC7062BD3}'
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: statemenet
+          in: body
+          description: The statement to create.
+          required: false
+          schema:
+            $ref: '#/definitions/Statement'
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Statement'
+        '400':
+          description: Bad Request
+  /specif/v1.0/statement-classes:
+    get:
+      tags:
+        - StatementClass
+      summary: Returns all statement classes with all available revisions.
+      operationId: '{2A802BB2-21D4-4CB2-B58C-5581E7A6826C}'
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/StatementClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statement-classes/{id}':
+    get:
+      tags:
+        - StatementClass
+      summary: Returns the main/latest revision of the statement class with the given ID.
+      operationId: '{58699D91-581F-41A5-A277-AE2467E97DC2}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/StatementClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statement-classes/{id}/revisions':
+    get:
+      tags:
+        - StatementClass
+      summary: Returns all statement class revisions for the given id.
+      operationId: '{B078DDAE-FBFE-4899-8684-E085890D8817}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/StatementClass'
+  '/specif/v1.0/statement-classes/{id}/revisions/{revision}':
+    get:
+      tags:
+        - StatementClass
+      summary: Returns the statement class with the specific revision.
+      operationId: '{B4A9859C-D05D-4B87-BBEC-4F181511E803}'
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The statement class ID.
+          required: true
+          type: string
+        - name: revision
+          in: path
+          description: The statement class revision.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/StatementClass'
+        '404':
+          description: Not Found
+definitions:
+  DataType:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      description:
+        $ref: '#/definitions/Value'
+      type:
+        type: string
+      maxLength:
+        format: int32
+        type: integer
+      accuracy:
+        format: int32
+        type: integer
+      min:
+        format: int32
+        type: integer
+      max:
+        format: int32
+        type: integer
+      values:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/EnumValue'
+      multiple:
+        type: boolean
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  Revision:
+    type: object
+    properties: {}
+  Value:
+    type: object
+    properties:
+      languageValues:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/LanguageValue'
+  EnumValue:
+    type: object
+    properties:
+      id:
+        type: string
+      title:
+        $ref: '#/definitions/Value'
+  LanguageValue:
+    type: object
+    properties:
+      text:
+        type: string
+      language:
+        type: string
+  Node:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      description:
+        $ref: '#/definitions/Value'
+      resource:
+        type: object
+      nodes:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Node'
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  PropertyClass:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      description:
+        $ref: '#/definitions/Value'
+      dataType:
+        type: string
+      multiple:
+        type: boolean
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  StatementClass:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      description:
+        $ref: '#/definitions/Value'
+      extends:
+        $ref: '#/definitions/Key'
+      icon:
+        type: string
+      instantiation:
+        uniqueItems: false
+        type: array
+        items:
+          type: string
+      propertyClasses:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Key'
+      subjectClasses:
+        uniqueItems: false
+        type: array
+        items:
+          type: string
+      objectClasses:
+        uniqueItems: false
+        type: array
+        items:
+          type: string
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  Key:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+  Resource:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      class:
+        $ref: '#/definitions/Key'
+      description:
+        $ref: '#/definitions/Value'
+      properties:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Property'
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  Property:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      value:
+        $ref: '#/definitions/Value'
+      description:
+        $ref: '#/definitions/Value'
+      class:
+        $ref: '#/definitions/Key'
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  ResourceClass:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      description:
+        $ref: '#/definitions/Value'
+      extends:
+        $ref: '#/definitions/Key'
+      icon:
+        type: string
+      isHeading:
+        type: boolean
+      instantiation:
+        uniqueItems: false
+        type: array
+        items:
+          type: string
+      propertyClasses:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Key'
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  Statement:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Revision'
+      title:
+        $ref: '#/definitions/Value'
+      class:
+        $ref: '#/definitions/Key'
+      description:
+        $ref: '#/definitions/Value'
+      subject:
+        $ref: '#/definitions/Key'
+      object:
+        $ref: '#/definitions/Key'
+      properties:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/Property'
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+tags: []
