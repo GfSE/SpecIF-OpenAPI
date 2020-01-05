@@ -4,7 +4,7 @@ info:
   title: SpecIF API
   description: Web API for the Specification Integration Facility (SpecIF).
   contact:
-    name: Gesellschaft für Systems Engineering (GfSE) e.V.
+    name: The SpecIF team at Gesellschaft für Systems Engineering (GfSE) e.V.
     url: 'https://specif.de'
   license:
     name: Apache License 2.0
@@ -15,7 +15,7 @@ paths:
       tags:
         - DataType
       summary: Returns all data types with all available revisions.
-      operationId: '{DD9B1B7F-8590-4D7C-BA1A-CA7B29E8C2F2}'
+      operationId: GetAllDataTypes
       consumes: []
       produces:
         - application/json
@@ -33,7 +33,7 @@ paths:
       tags:
         - DataType
       summary: Returns the latest revision of the data type with the given ID.
-      operationId: '{E4F3BFAC-F7FB-4520-8E0D-573E67E30B09}'
+      operationId: GetDataTypeById
       consumes: []
       produces:
         - application/json
@@ -53,7 +53,7 @@ paths:
       tags:
         - DataType
       summary: Returns all data type revisions for the given id.
-      operationId: '{390AC1DE-B0B2-4B46-9C82-64F726E4297D}'
+      operationId: GetAllDatatypeRevisions
       consumes: []
       produces:
         - application/json
@@ -75,20 +75,20 @@ paths:
     get:
       tags:
         - DataType
-      summary: Returns the statement class with the specific revision.
-      operationId: '{056899F6-DF57-4C93-BC65-65756F0C548D}'
+      summary: Returns the data type with the specific revision.
+      operationId: GetDataTypeRevision
       consumes: []
       produces:
         - application/json
       parameters:
         - name: id
           in: path
-          description: The statement class ID.
+          description: The data type ID.
           required: true
           type: string
         - name: revision
           in: path
-          description: The statement class revision.
+          description: The data type revision.
           required: true
           type: string
       responses:
@@ -103,7 +103,7 @@ paths:
       tags:
         - Hierarchy
       summary: Get all hierarchies.
-      operationId: '{E39E9E69-3D03-444E-BA3F-94A4FCBD64EF}'
+      operationId: GetAllHierarchies
       consumes: []
       produces:
         - application/json
@@ -120,7 +120,7 @@ paths:
       tags:
         - Hierarchy
       summary: Update an existing hierarchy.
-      operationId: '{CB9770FC-51C3-4A59-8721-0D2D7A16E889}'
+      operationId: UpdateHierarchy
       consumes:
         - application/json-patch+json
         - application/json
@@ -142,7 +142,7 @@ paths:
       tags:
         - Hierarchy
       summary: Add a new hierarchy.
-      operationId: '{38767365-6AE8-478E-99E5-5D15B9FA373D}'
+      operationId: AddNewHierarchy
       consumes:
         - application/json-patch+json
         - application/json
@@ -165,7 +165,7 @@ paths:
       tags:
         - Hierarchy
       summary: Get hierarchy with a specific ID.
-      operationId: '{B0D375B8-B74F-407F-93B0-2D6D3E7A41B5}'
+      operationId: GetHierarchyById
       consumes: []
       produces:
         - application/json
@@ -185,7 +185,7 @@ paths:
       tags:
         - Node
       summary: Returns all available root nodes.
-      operationId: '{0B852224-C7A9-4033-8D2D-6F7496A9B406}'
+      operationId: GetRootNodes
       consumes: []
       produces:
         - application/json
@@ -203,7 +203,7 @@ paths:
       tags:
         - Node
       summary: Returns one level of child nodes for a parent node.
-      operationId: '{37F661E2-B68B-4216-819B-39A73A658A7E}'
+      operationId: GetChildNodes
       consumes: []
       produces:
         - application/json
@@ -220,12 +220,16 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Node'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
   '/specif/v1.0/nodes/parent/{parentNodeId}':
     post:
       tags:
         - Node
       summary: Add a new node to a parent node with given ID.
-      operationId: '{6ED6BA02-F728-40B4-9397-0C28F897347F}'
+      operationId: AddChildNode
       consumes:
         - application/json-patch+json
         - application/json
@@ -253,7 +257,7 @@ paths:
       tags:
         - Node
       summary: Updates an existing node.
-      operationId: '{77078CD1-7905-4866-B799-3AEBF9E447A0}'
+      operationId: UpdateNode
       consumes:
         - application/json-patch+json
         - application/json
@@ -276,7 +280,7 @@ paths:
       tags:
         - Node
       summary: Delete a node with the given ID.
-      operationId: '{7F14E8B8-D9FE-402B-8E3C-14520D52876A}'
+      operationId: DeleteNode
       consumes: []
       produces:
         - application/json
@@ -322,7 +326,7 @@ paths:
       tags:
         - PrimitiveTypes
       summary: Returns a list with the names of the available primitive types.
-      operationId: '{F5C716B4-D0B2-4592-9E7D-490D06DDB7F1}'
+      operationId: GetPrimitiveTypeList
       consumes: []
       produces:
         - application/json
@@ -340,7 +344,7 @@ paths:
       tags:
         - PropertyClass
       summary: Returns all property classes with alll available revisions.
-      operationId: '{2B0A5F0B-7AB8-4360-849B-2BC923D95478}'
+      operationId: GetAllPropertyClasses
       consumes: []
       produces:
         - application/json
@@ -360,7 +364,7 @@ paths:
       tags:
         - PropertyClass
       summary: Returns the main/latest revision of the property class with the given ID.
-      operationId: '{AEA2CA31-5BFD-4B20-BD83-85803E44F621}'
+      operationId: GetPropertyClassById
       consumes: []
       produces:
         - application/json
@@ -384,7 +388,7 @@ paths:
       tags:
         - PropertyClass
       summary: Returns all property class revisions for the given id.
-      operationId: '{8908A80F-309A-4703-AE33-FF6EC6895679}'
+      operationId: GetAllPropertyClassRevisions
       consumes: []
       produces:
         - application/json
@@ -407,7 +411,7 @@ paths:
       tags:
         - PropertyClass
       summary: Returns the property class with the specific revision.
-      operationId: '{82D11D0F-3272-4DDE-91EB-7D1C2101D511}'
+      operationId: GetPropertyClassRevision
       consumes: []
       produces:
         - application/json
@@ -434,7 +438,7 @@ paths:
       tags:
         - Resource
       summary: Returns the latest version of the resource with the given ID.
-      operationId: '{80549B22-4BAA-4DF6-821E-731DD3D7DDAA}'
+      operationId: GetResourceById
       consumes: []
       produces:
         - application/json
@@ -454,7 +458,7 @@ paths:
       tags:
         - Resource
       summary: Returns a list of all revisions for the resource with the given ID.
-      operationId: '{04426F5F-4506-4A81-AC16-4DD56906744F}'
+      operationId: GetAllResourceRevisions
       consumes: []
       produces:
         - application/json
@@ -477,7 +481,7 @@ paths:
       tags:
         - Resource
       summary: Returns a specific revision for the resource with the given ID.
-      operationId: '{72B5AD9B-BB05-48F8-8BA8-1414B2876B04}'
+      operationId: GetResourceRevision
       consumes: []
       produces:
         - application/json
@@ -502,7 +506,7 @@ paths:
       tags:
         - Resource
       summary: Returns the latest revision for the resource with the given ID in the given branch.
-      operationId: '{A4A3494E-77BA-4472-9781-43604F265250}'
+      operationId: GetLatestResourceRevisionInBranch
       consumes: []
       produces:
         - application/json
@@ -527,7 +531,7 @@ paths:
       tags:
         - Resource
       summary: Adds a new resource to the SpecIF repository.
-      operationId: '{31B99DC1-E3DF-4D68-A42A-8537BCF58576}'
+      operationId: AddNewResource
       consumes:
         - application/json-patch+json
         - application/json
@@ -552,7 +556,7 @@ paths:
       tags:
         - ResourceClass
       summary: Returns all resource classes with all available revisions.
-      operationId: '{61E9367B-1147-440C-8A66-EEC08D80D32B}'
+      operationId: GetAllResourceClasses
       consumes: []
       produces:
         - application/json
@@ -574,7 +578,7 @@ paths:
       tags:
         - ResourceClass
       summary: Returns the main/latest revision of the resource class with the given ID.
-      operationId: '{EB830353-9D49-46B4-A4A6-5BA8D3F8966F}'
+      operationId: GetResourceClassById
       consumes: []
       produces:
         - application/json
@@ -598,7 +602,7 @@ paths:
       tags:
         - ResourceClass
       summary: Returns all resource class revisions for the given id.
-      operationId: '{DA361BE8-6AB3-43BB-8845-8B569F2326CB}'
+      operationId: GetAllResourceClassRevisions
       consumes: []
       produces:
         - application/json
@@ -625,7 +629,7 @@ paths:
       tags:
         - ResourceClass
       summary: Returns the resource class with the specific revision.
-      operationId: '{0475696B-A583-49A2-9EA9-7FF44607F982}'
+      operationId: GetResourceClassRevision
       consumes: []
       produces:
         - application/json
@@ -652,7 +656,7 @@ paths:
       tags:
         - Statement
       summary: Returns the main/latest revision of the statement nwith the given ID.
-      operationId: '{12914317-C04E-4FB8-84AF-45DB95083F04}'
+      operationId: GetStatementById
       consumes: []
       produces:
         - application/json
@@ -672,7 +676,7 @@ paths:
       tags:
         - Statement
       summary: Returns all available revisions for the statement wit the given ID.
-      operationId: '{F3BF44DD-A770-497F-A9DF-0A07C86F6760}'
+      operationId: GetAllStatementRevisions
       consumes: []
       produces:
         - application/json
@@ -699,7 +703,7 @@ paths:
       tags:
         - Statement
       summary: Returns a specific revision for the statement with the given id.
-      operationId: '{32E78708-579F-4092-8A1A-87D5ACC340A4}'
+      operationId: GetStatementRevision
       consumes: []
       produces:
         - application/json
@@ -728,7 +732,7 @@ paths:
       tags:
         - Statement
       summary: Returns all statements for the subject resource with the given ID and the main/latest subject revision.
-      operationId: '{7BED120E-7D34-4C2D-97CC-F71696756DC6}'
+      operationId: GetStatementsForMainLatestSubject
       consumes: []
       produces:
         - application/json
@@ -755,7 +759,7 @@ paths:
       tags:
         - Statement
       summary: Returns all statements for the object resource with the given ID and the main/latest object revision.
-      operationId: '{36181124-53FE-40B8-B181-2AEB8ED2D80B}'
+      operationId: GetStatementsForMainLatestObject
       consumes: []
       produces:
         - application/json
@@ -782,7 +786,7 @@ paths:
       tags:
         - Statement
       summary: Returns all statements for the subject resource with the given ID and the given subject revision.
-      operationId: '{70691363-CCCC-42C5-923C-01E389B67BA0}'
+      operationId: GetStatementsBySubject
       consumes: []
       produces:
         - application/json
@@ -814,7 +818,7 @@ paths:
       tags:
         - Statement
       summary: Returns all statements for the object resource with the given ID and the given object revision.
-      operationId: '{9D5A2D5E-DA38-4133-97AF-222F5A488E06}'
+      operationId: GetStatementsByObject
       consumes: []
       produces:
         - application/json
@@ -846,7 +850,7 @@ paths:
       tags:
         - Statement
       summary: Returns all statements for a resource with a given ID and main/latest revision - resource is uses as subject OR object for the statement.
-      operationId: '{91124BAC-0239-4E73-8A9B-45069346B4E7}'
+      operationId: GetAllStatementsForMainLatestResource
       consumes: []
       produces:
         - application/json
@@ -873,7 +877,7 @@ paths:
       tags:
         - Statement
       summary: Returns all statements for a resource with a given ID and teh given revision - resource is uses as subject OR object for the statement.
-      operationId: '{63856D94-4DFB-4FC7-B2B5-F9F961847BF8}'
+      operationId: GetAllStatementsForResource
       consumes: []
       produces:
         - application/json
@@ -905,7 +909,7 @@ paths:
       tags:
         - Statement
       summary: 'Add a new statement. If a statement with the given ID is still existant, a new revision is created automatically.'
-      operationId: '{E1450BE9-B21F-4C12-8B53-66FEC7062BD3}'
+      operationId: AddNewStatement
       consumes:
         - application/json-patch+json
         - application/json
@@ -932,7 +936,7 @@ paths:
       tags:
         - StatementClass
       summary: Returns all statement classes with all available revisions.
-      operationId: '{2A802BB2-21D4-4CB2-B58C-5581E7A6826C}'
+      operationId: GetAllStatementClasses
       consumes: []
       produces:
         - application/json
@@ -954,7 +958,7 @@ paths:
       tags:
         - StatementClass
       summary: Returns the main/latest revision of the statement class with the given ID.
-      operationId: '{58699D91-581F-41A5-A277-AE2467E97DC2}'
+      operationId: GetStatementClassById
       consumes: []
       produces:
         - application/json
@@ -978,7 +982,7 @@ paths:
       tags:
         - StatementClass
       summary: Returns all statement class revisions for the given id.
-      operationId: '{B078DDAE-FBFE-4899-8684-E085890D8817}'
+      operationId: GetAllStatementClassRevisions
       consumes: []
       produces:
         - application/json
@@ -1001,7 +1005,7 @@ paths:
       tags:
         - StatementClass
       summary: Returns the statement class with the specific revision.
-      operationId: '{B4A9859C-D05D-4B87-BBEC-4F181511E803}'
+      operationId: GetStatementClassRevision
       consumes: []
       produces:
         - application/json
@@ -1136,7 +1140,7 @@ definitions:
       description:
         $ref: '#/definitions/Value'
       dataType:
-        type: string
+        $ref: '#/definitions/Key'
       multiple:
         type: boolean
       changedAt:
@@ -1144,6 +1148,13 @@ definitions:
         type: string
       changedBy:
         type: string
+  Key:
+    type: object
+    properties:
+      id:
+        type: string
+      revision:
+        $ref: '#/definitions/Revision'
   StatementClass:
     type: object
     properties:
@@ -1189,13 +1200,6 @@ definitions:
         type: string
       changedBy:
         type: string
-  Key:
-    type: object
-    properties:
-      id:
-        type: string
-      revision:
-        $ref: '#/definitions/Revision'
   Resource:
     type: object
     properties:
