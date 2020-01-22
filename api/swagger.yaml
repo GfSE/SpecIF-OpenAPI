@@ -10,30 +10,30 @@ info:
     name: Apache License 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
 paths:
-  /specif/v1.0/data-types:
+  '/specif/v1.0/dataTypes':
     get:
       tags:
-        - DataType
-      summary: Returns all data types with all available revisions.
-      operationId: GetAllDataTypes
+        - dataType
+      summary: Return all dataTypes.
+      operationId: getAllDataTypes
       consumes: []
       produces:
         - application/json
       parameters: []
       responses:
         '200':
-          description: List of data types suceessfull returned.
+          description: List of data types suceessfully returned.
           schema:
             uniqueItems: false
             type: array
             items:
-              $ref: '#/definitions/DataType'
-  '/specif/v1.0/data-types/{id}':
+              $ref: '#/definitions/dataType'
+  '/specif/v1.0/dataTypes/{id}':
     get:
       tags:
-        - DataType
-      summary: Returns the latest revision of the data type with the given ID.
-      operationId: GetDataTypeById
+        - dataType
+      summary: Return the latest revision of the data type with the given ID.
+      operationId: getDataTypeById
       consumes: []
       produces:
         - application/json
@@ -48,62 +48,12 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/data-types/{id}/revisions':
+  '/specif/v1.0/hierarchies':
     get:
       tags:
-        - DataType
-      summary: Returns all data type revisions for the given id.
-      operationId: GetAllDatatypeRevisions
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: ''
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/DataType'
-  '/specif/v1.0/data-types/{id}/revisions/{revision}':
-    get:
-      tags:
-        - DataType
-      summary: Returns the data type with the specific revision.
-      operationId: GetDataTypeRevision
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: The data type ID.
-          required: true
-          type: string
-        - name: revision
-          in: path
-          description: The data type revision.
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/DataType'
-        '404':
-          description: Not Found
-  /specif/v1.0/hierarchies:
-    get:
-      tags:
-        - Hierarchy
-      summary: Get all hierarchies.
-      operationId: GetAllHierarchies
+        - hierarchy
+      summary: Get all hierarchies without nodes.
+      operationId: getAllHierarchies
       consumes: []
       produces:
         - application/json
@@ -115,34 +65,12 @@ paths:
             uniqueItems: false
             type: array
             items:
-              $ref: '#/definitions/Node'
-    put:
-      tags:
-        - Hierarchy
-      summary: Update an existing hierarchy.
-      operationId: UpdateHierarchy
-      consumes:
-        - application/json-patch+json
-        - application/json
-        - text/json
-        - application/*+json
-      produces:
-        - application/json
-      parameters:
-        - name: hierarchy
-          in: body
-          description: ''
-          required: false
-          schema:
-            $ref: '#/definitions/Node'
-      responses:
-        '200':
-          description: Success
+              $ref: '#/definitions/node'
     post:
       tags:
-        - Hierarchy
-      summary: Add a new hierarchy.
-      operationId: AddNewHierarchy
+        - hierarchy
+      summary: Create a hierarchy with supplied nodes.
+      operationId: createHierarchy
       consumes:
         - application/json-patch+json
         - application/json
@@ -156,16 +84,38 @@ paths:
           description: ''
           required: false
           schema:
-            $ref: '#/definitions/Node'
+            $ref: '#/definitions/node'
+      responses:
+        '201':
+          description: Success
+    put:
+      tags:
+        - hierarchy
+      summary: Update an existing hierarchy with supplied nodes.
+      operationId: updateHierarchy
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: hierarchy
+          in: body
+          description: ''
+          required: false
+          schema:
+            $ref: '#/definitions/node'
       responses:
         '200':
           description: Success
   '/specif/v1.0/hierarchies/{id}':
     get:
       tags:
-        - Hierarchy
-      summary: Get hierarchy with a specific ID.
-      operationId: GetHierarchyById
+        - hierarchy
+      summary: Get hierarchy with a specific ID with all nodes.
+      operationId: getHierarchyById
       consumes: []
       produces:
         - application/json
@@ -179,8 +129,27 @@ paths:
         '200':
           description: Success
           schema:
-            $ref: '#/definitions/Node'
-  /specif/v1.0/nodes/root-nodes:
+            $ref: '#/definitions/node'
+    delete:
+      tags:
+        - hierarchy
+      summary: Delete hierarchy with a specific ID with all nodes.
+      operationId: deleteHierarchyById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The hierarchy ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/node'
+  '/specif/v1.0/nodes/root-nodes':
     get:
       tags:
         - Node
@@ -197,7 +166,7 @@ paths:
             uniqueItems: false
             type: array
             items:
-              $ref: '#/definitions/Node'
+              $ref: '#/definitions/node'
   '/specif/v1.0/nodes/{parentNodeId}/child-nodes':
     get:
       tags:
@@ -219,7 +188,7 @@ paths:
             uniqueItems: false
             type: array
             items:
-              $ref: '#/definitions/Node'
+              $ref: '#/definitions/node'
         '400':
           description: Bad Request
         '404':
@@ -248,7 +217,7 @@ paths:
           description: The new child node.
           required: false
           schema:
-            $ref: '#/definitions/Node'
+            $ref: '#/definitions/node'
       responses:
         '200':
           description: Success
@@ -271,7 +240,7 @@ paths:
           description: The node to update.
           required: false
           schema:
-            $ref: '#/definitions/Node'
+            $ref: '#/definitions/node'
       responses:
         '201':
           description: Success
@@ -1028,7 +997,7 @@ paths:
         '404':
           description: Not Found
 definitions:
-  DataType:
+  dataType:
     type: object
     properties:
       id:
@@ -1095,7 +1064,7 @@ definitions:
         type: string
       language:
         type: string
-  Node:
+  node:
     type: object
     properties:
       id:
@@ -1117,7 +1086,7 @@ definitions:
         uniqueItems: false
         type: array
         items:
-          $ref: '#/definitions/Node'
+          $ref: '#/definitions/node'
       changedAt:
         format: date-time
         type: string
