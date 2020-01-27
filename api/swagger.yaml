@@ -30,12 +30,10 @@ paths:
               $ref: '#/definitions/project'
         '400':
           description: Bad Request
-        '404':
-          description: Not Found
     post:
       tags:
         - project
-      summary: Create a project with supplied elements; the supplied ID must not exist.
+      summary: Create a project with supplied elements; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
       operationId: createProject
       consumes:
         - application/json-patch+json
@@ -50,8 +48,6 @@ paths:
           description: Success
         '400':
           description: Bad Request
-        '404':
-          description: Not Found
   '/specif/v1.0/projects/{pid}':
     get:
       tags:
@@ -99,7 +95,7 @@ paths:
     get:
       tags:
         - dataType
-      summary: Return all dataTypes.
+      summary: Return all data types.
       operationId: getAllDataTypes
       consumes: []
       produces:
@@ -120,12 +116,10 @@ paths:
               $ref: '#/definitions/dataType'
         '400':
           description: Bad Request
-        '404':
-          description: Not Found
     post:
       tags:
         - dataType
-      summary: Create a dataType; the supplied ID must not exist.
+      summary: Create a data type; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
       operationId: createDataType
       consumes:
         - application/json-patch+json
@@ -145,12 +139,10 @@ paths:
           description: Success
         '400':
           description: Bad Request
-        '404':
-          description: Not Found
     put:
       tags:
         - dataType
-      summary: Update the dataType; the supplied ID must exist.
+      summary: Update the data type; the supplied ID must exist.
       operationId: updateDataType
       consumes:
         - application/json-patch+json
@@ -176,7 +168,7 @@ paths:
     get:
       tags:
         - dataType
-      summary: Return the dataType with the given ID.
+      summary: Return the data type with the given ID.
       operationId: getDataTypeById
       consumes: []
       produces:
@@ -202,7 +194,7 @@ paths:
     delete:
       tags:
         - dataType
-      summary: Delete the dataType; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
+      summary: Delete the data type; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
       operationId: deleteDataTypeById
       consumes: []
       produces:
@@ -216,6 +208,126 @@ paths:
         - name: id
           in: path
           description: The hierarchy ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '901':
+          description: Is Referenced
+  /specif/v1.0/propertyClasses:
+    get:
+      tags:
+        - propertyClass
+      summary: Return all property classes.
+      operationId: GetAllPropertyClasses
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/PropertyClass'
+        '400':
+          description: Bad Request
+    post:
+      tags:
+        - propertyClass
+      summary: Create a property class; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
+      operationId: createPropertyClass
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Success
+        '400':
+          description: Bad Request
+    put:
+      tags:
+        - propertyClass
+      summary: Update the property class; the supplied ID must exist.
+      operationId: updatePropertyClass
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/propertyClasses/{id}':
+    get:
+      tags:
+        - propertyClass
+      summary: Return the property class with the given ID.
+      operationId: GetPropertyClassById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The property class ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PropertyClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+    delete:
+      tags:
+        - propertyClass
+      summary: Delete the property class; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
+      operationId: deletePropertyClassById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The property class ID.
           required: true
           type: string
       responses:
@@ -257,7 +369,7 @@ paths:
     post:
       tags:
         - hierarchy
-      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must not exist. ?parent=nodeId - the sub-tree will be inserted as first child; ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level.
+      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion. ?parent=nodeId - the sub-tree will be inserted as first child; ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level.
       operationId: createHierarchy
       consumes:
         - application/json-patch+json
@@ -530,100 +642,6 @@ paths:
             type: array
             items:
               type: string
-  /specif/v1.0/property-classes:
-    get:
-      tags:
-        - PropertyClass
-      summary: Returns all property classes with alll available revisions.
-      operationId: GetAllPropertyClasses
-      consumes: []
-      produces:
-        - application/json
-      parameters: []
-      responses:
-        '200':
-          description: Success
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/PropertyClass'
-        '400':
-          description: Bad Request
-  '/specif/v1.0/property-classes/{id}':
-    get:
-      tags:
-        - PropertyClass
-      summary: Returns the main/latest revision of the property class with the given ID.
-      operationId: GetPropertyClassById
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: ''
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/PropertyClass'
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found or No Permission
-  '/specif/v1.0/property-classes/{id}/revisions':
-    get:
-      tags:
-        - PropertyClass
-      summary: Returns all property class revisions for the given id.
-      operationId: GetAllPropertyClassRevisions
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: ''
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/PropertyClass'
-  '/specif/v1.0/property-classes/{id}/revisions/{revision}':
-    get:
-      tags:
-        - PropertyClass
-      summary: Returns the property class with the specific revision.
-      operationId: GetPropertyClassRevision
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: The property class ID.
-          required: true
-          type: string
-        - name: revision
-          in: path
-          description: The property class revision.
-          required: true
-          type: string
-      responses:
-        '201':
-          description: Success
-          schema:
-            $ref: '#/definitions/StatementClass'
-        '404':
-          description: Not Found
   '/specif/v1.0/resources/{id}':
     get:
       tags:
