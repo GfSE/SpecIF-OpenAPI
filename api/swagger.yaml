@@ -10,50 +10,12 @@ info:
     name: Apache License 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
 paths:
-  '/specif/v1.0/dataTypes':
+  '/specif/v1.0/projects':
     get:
       tags:
-        - dataType
-      summary: Return all dataTypes.
-      operationId: getAllDataTypes
-      consumes: []
-      produces:
-        - application/json
-      parameters: []
-      responses:
-        '200':
-          description: List of data types suceessfully returned.
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/dataType'
-  '/specif/v1.0/dataTypes/{id}':
-    get:
-      tags:
-        - dataType
-      summary: Return the latest revision of the data type with the given ID.
-      operationId: getDataTypeById
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: The data type ID.
-          required: true
-          type: string
-      responses:
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-  '/specif/v1.0/hierarchies':
-    get:
-      tags:
-        - hierarchy
-      summary: Get all hierarchies without nodes.
-      operationId: getAllHierarchies
+        - project
+      summary: Return all projects; to limit the size only root properties are delivered.
+      operationId: getAllProjects
       consumes: []
       produces:
         - application/json
@@ -65,11 +27,227 @@ paths:
             uniqueItems: false
             type: array
             items:
+              $ref: '#/definitions/project'
+    post:
+      tags:
+        - project
+      summary: Create a project with supplied elements; the supplied ID must not exist.
+      operationId: createProject
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '201':
+          description: Success
+  '/specif/v1.0/projects/{pid}':
+    get:
+      tags:
+        - project
+      summary: Return the project with the given ID; to limit the size only ??? are delivered.
+      operationId: getProjectById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+    delete:
+      tags:
+        - project
+      summary: Delete the project with all content; the supplied ID must exist.
+      operationId: deleteProjectById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+  '/specif/v1.0/projects/{pid}/dataTypes':
+    get:
+      tags:
+        - dataType
+      summary: Return all dataTypes.
+      operationId: getAllDataTypes
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of dataTypes suceessfully returned.
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/dataType'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+    post:
+      tags:
+        - dataType
+      summary: Create a dataType; the supplied ID must not exist.
+      operationId: createDataType
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+    put:
+      tags:
+        - dataType
+      summary: Update the dataType; the supplied ID must exist.
+      operationId: updateDataType
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+  '/specif/v1.0/projects/{pid}/dataTypes/{id}':
+    get:
+      tags:
+        - dataType
+      summary: Return the dataType with the given ID.
+      operationId: getDataTypeById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The data type ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+    delete:
+      tags:
+        - dataType
+      summary: Delete the dataType; the supplied ID must exist.
+      operationId: deleteDataTypeById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The hierarchy ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+  '/specif/v1.0/projects/{pid}/hierarchies':
+    get:
+      tags:
+        - hierarchy
+      summary: Get all hierarchies (root-nodes) without their sub-trees (nodes).
+      operationId: getAllHierarchies
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
               $ref: '#/definitions/node'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
     post:
       tags:
         - hierarchy
-      summary: Create a hierarchy with supplied nodes.
+      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must not exist. ?parent=nodeId - the sub-tree will be inserted as first child; ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level.
       operationId: createHierarchy
       consumes:
         - application/json-patch+json
@@ -79,6 +257,11 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
         - name: hierarchy
           in: body
           description: ''
@@ -88,10 +271,14 @@ paths:
       responses:
         '201':
           description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
     put:
       tags:
         - hierarchy
-      summary: Update an existing hierarchy with supplied nodes.
+      summary: Update an existing hierarchy (sub-tree) with supplied nodes; the supplied ID must exist somewhere in any hierarchy.
       operationId: updateHierarchy
       consumes:
         - application/json-patch+json
@@ -101,6 +288,11 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
         - name: hierarchy
           in: body
           description: ''
@@ -110,16 +302,25 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/hierarchies/{id}':
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
+  '/specif/v1.0/projects/{pid}/hierarchies/{id}':
     get:
       tags:
         - hierarchy
-      summary: Get hierarchy with a specific ID with all nodes.
+      summary: Get hierarchy (sub-tree) with all nodes; the supplied ID must exist somewhere in any hierarchy.
       operationId: getHierarchyById
       consumes: []
       produces:
         - application/json
       parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
         - name: id
           in: path
           description: The hierarchy ID.
@@ -130,15 +331,24 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/node'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
     delete:
       tags:
         - hierarchy
-      summary: Delete hierarchy with a specific ID with all nodes.
+      summary: Delete hierarchy (sub-tree) with all nodes; the supplied ID must exist somewhere in any hierarchy.
       operationId: deleteHierarchyById
       consumes: []
       produces:
         - application/json
       parameters:
+        - name: pid
+          in: path
+          description: The project ID.
+          required: true
+          type: string
         - name: id
           in: path
           description: The hierarchy ID.
@@ -147,8 +357,10 @@ paths:
       responses:
         '200':
           description: Success
-          schema:
-            $ref: '#/definitions/node'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found or No Permission
   '/specif/v1.0/nodes/root-nodes':
     get:
       tags:
@@ -351,7 +563,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found
+          description: Not Found or No Permission
   '/specif/v1.0/property-classes/{id}/revisions':
     get:
       tags:
@@ -997,6 +1209,14 @@ paths:
         '404':
           description: Not Found
 definitions:
+  project:
+    type: object
+    properties:
+      id:
+        type: string
+      changedAt:
+        format: date-time
+        type: string
   dataType:
     type: object
     properties:
