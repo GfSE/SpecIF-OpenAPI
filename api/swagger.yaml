@@ -28,6 +28,10 @@ paths:
             type: array
             items:
               $ref: '#/definitions/project'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
     post:
       tags:
         - project
@@ -44,6 +48,10 @@ paths:
       responses:
         '201':
           description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
   '/specif/v1.0/projects/{pid}':
     get:
       tags:
@@ -65,7 +73,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     delete:
       tags:
         - project
@@ -86,7 +94,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
   '/specif/v1.0/projects/{pid}/dataTypes':
     get:
       tags:
@@ -113,7 +121,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     post:
       tags:
         - dataType
@@ -138,7 +146,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     put:
       tags:
         - dataType
@@ -163,7 +171,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
   '/specif/v1.0/projects/{pid}/dataTypes/{id}':
     get:
       tags:
@@ -190,11 +198,11 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     delete:
       tags:
         - dataType
-      summary: Delete the dataType; the supplied ID must exist.
+      summary: Delete the dataType; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
       operationId: deleteDataTypeById
       consumes: []
       produces:
@@ -216,7 +224,9 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
+        '901':
+          description: Is Referenced
   '/specif/v1.0/projects/{pid}/hierarchies':
     get:
       tags:
@@ -243,7 +253,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     post:
       tags:
         - hierarchy
@@ -274,7 +284,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     put:
       tags:
         - hierarchy
@@ -305,7 +315,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
   '/specif/v1.0/projects/{pid}/hierarchies/{id}':
     get:
       tags:
@@ -334,7 +344,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
     delete:
       tags:
         - hierarchy
@@ -360,7 +370,7 @@ paths:
         '400':
           description: Bad Request
         '404':
-          description: Not Found or No Permission
+          description: Not Found
   '/specif/v1.0/nodes/root-nodes':
     get:
       tags:
