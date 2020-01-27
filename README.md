@@ -1,3 +1,5 @@
+![alt text](http://specif.de/files/template/specif-logo.png "SpecIF Open SE Models")
+
 # SpecIF-OpenAPI
 Web API definition for SpecIF.
 
