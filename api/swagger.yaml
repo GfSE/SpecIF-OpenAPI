@@ -91,12 +91,12 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/projects/{pid}/dataTypes':
+  '/specif/v1.0/projects/{pid}/datatypes':
     get:
       tags:
-        - dataType
+        - datatype
       summary: Return all data types.
-      operationId: getAllDataTypes
+      operationId: getalldatatypes
       consumes: []
       produces:
         - application/json
@@ -108,19 +108,19 @@ paths:
           type: string
       responses:
         '200':
-          description: List of dataTypes suceessfully returned.
+          description: List of datatypes suceessfully returned.
           schema:
             uniqueItems: false
             type: array
             items:
-              $ref: '#/definitions/dataType'
+              $ref: '#/definitions/datatype'
         '400':
           description: Bad Request
     post:
       tags:
-        - dataType
+        - datatype
       summary: Create a data type; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
-      operationId: createDataType
+      operationId: createdatatype
       consumes:
         - application/json-patch+json
         - application/json
@@ -141,9 +141,9 @@ paths:
           description: Bad Request
     put:
       tags:
-        - dataType
+        - datatype
       summary: Update the data type; the supplied ID must exist.
-      operationId: updateDataType
+      operationId: updatedatatype
       consumes:
         - application/json-patch+json
         - application/json
@@ -164,12 +164,12 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/projects/{pid}/dataTypes/{id}':
+  '/specif/v1.0/projects/{pid}/datatypes/{id}':
     get:
       tags:
-        - dataType
+        - datatype
       summary: Return the data type with the given ID.
-      operationId: getDataTypeById
+      operationId: getdatatype
       consumes: []
       produces:
         - application/json
@@ -193,9 +193,9 @@ paths:
           description: Not Found
     delete:
       tags:
-        - dataType
+        - datatype
       summary: Delete the data type; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
-      operationId: deleteDataTypeById
+      operationId: deletedatatype
       consumes: []
       produces:
         - application/json
@@ -219,12 +219,12 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  /specif/v1.0/propertyClasses:
+  /specif/v1.0/propertyclasses:
     get:
       tags:
-        - propertyClass
+        - propertyclass
       summary: Return all property classes.
-      operationId: GetAllPropertyClasses
+      operationId: Getallpropertyclasses
       consumes: []
       produces:
         - application/json
@@ -236,14 +236,14 @@ paths:
             uniqueItems: false
             type: array
             items:
-              $ref: '#/definitions/PropertyClass'
+              $ref: '#/definitions/propertyclass'
         '400':
           description: Bad Request
     post:
       tags:
-        - propertyClass
+        - propertyclass
       summary: Create a property class; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
-      operationId: createPropertyClass
+      operationId: createpropertyclass
       consumes:
         - application/json-patch+json
         - application/json
@@ -264,9 +264,9 @@ paths:
           description: Bad Request
     put:
       tags:
-        - propertyClass
+        - propertyclass
       summary: Update the property class; the supplied ID must exist.
-      operationId: updatePropertyClass
+      operationId: updatepropertyclass
       consumes:
         - application/json-patch+json
         - application/json
@@ -287,12 +287,12 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/propertyClasses/{id}':
+  '/specif/v1.0/propertyclasses/{id}':
     get:
       tags:
-        - propertyClass
+        - propertyclass
       summary: Return the property class with the given ID.
-      operationId: GetPropertyClassById
+      operationId: Getpropertyclass
       consumes: []
       produces:
         - application/json
@@ -306,16 +306,16 @@ paths:
         '200':
           description: Success
           schema:
-            $ref: '#/definitions/PropertyClass'
+            $ref: '#/definitions/propertyclass'
         '400':
           description: Bad Request
         '404':
           description: Not Found or No Permission
     delete:
       tags:
-        - propertyClass
+        - propertyclass
       summary: Delete the property class; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
-      operationId: deletePropertyClassById
+      operationId: deletepropertyclass
       consumes: []
       produces:
         - application/json
@@ -1245,7 +1245,7 @@ definitions:
       changedAt:
         format: date-time
         type: string
-  dataType:
+  datatype:
     type: object
     properties:
       id:
@@ -1340,7 +1340,7 @@ definitions:
         type: string
       changedBy:
         type: string
-  PropertyClass:
+  propertyclass:
     type: object
     properties:
       id:
@@ -1356,7 +1356,7 @@ definitions:
         $ref: '#/definitions/Value'
       description:
         $ref: '#/definitions/Value'
-      dataType:
+      datatype:
         $ref: '#/definitions/Key'
       multiple:
         type: boolean
@@ -1397,7 +1397,7 @@ definitions:
         type: array
         items:
           type: string
-      propertyClasses:
+      propertyclasses:
         uniqueItems: false
         type: array
         items:
@@ -1497,7 +1497,7 @@ definitions:
         type: array
         items:
           type: string
-      propertyClasses:
+      propertyclasses:
         uniqueItems: false
         type: array
         items:
