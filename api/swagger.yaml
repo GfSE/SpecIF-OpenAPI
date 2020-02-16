@@ -33,7 +33,7 @@ paths:
     post:
       tags:
         - project
-      summary: Create a project with supplied elements; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
+      summary: Create a project with supplied elements; the supplied ID must be unique. If no ID is supplied, it is generated before insertion.
       operationId: createProject
       consumes:
         - application/json-patch+json
@@ -114,7 +114,7 @@ paths:
     post:
       tags:
         - dataType
-      summary: Create a data type; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
+      summary: Create a data type; the supplied ID must be unique. If no ID is supplied, it is generated before insertion.
       operationId: createDataType
       consumes:
         - application/json-patch+json
@@ -217,7 +217,7 @@ paths:
     post:
       tags:
         - propertyClass
-      summary: Create a property class; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion.
+      summary: Create a property class; the supplied ID must be unique. If no ID is supplied, it is generated before insertion.
       operationId: createPropertyClass
       consumes:
         - application/json-patch+json
@@ -322,7 +322,7 @@ paths:
     post:
       tags:
         - resourceClass
-      summary: Create a resource class; the supplied ID must be unique in the project scope. 
+      summary: Create a resource class; the supplied ID must be unique. 
       operationId: createResourceClass
       consumes:
         - application/json-patch+json
@@ -427,7 +427,7 @@ paths:
     post:
       tags:
         - statementClass
-      summary: Create a statement class; the supplied ID must be unique in the project scope. 
+      summary: Create a statement class; the supplied ID must be unique. 
       operationId: createStatementClass
       consumes:
         - application/json-patch+json
@@ -532,7 +532,7 @@ paths:
     post:
       tags:
         - resource
-      summary: Create a resource; the supplied ID must be unique in the project scope. 
+      summary: Create a resource; the supplied ID must be unique. 
       operationId: createResource
       consumes:
         - application/json-patch+json
@@ -637,7 +637,7 @@ paths:
     post:
       tags:
         - statement
-      summary: Create a statement; the supplied ID must be unique in the project scope. 
+      summary: Create a statement; the supplied ID must be unique. 
       operationId: createStatement
       consumes:
         - application/json-patch+json
@@ -717,8 +717,6 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-        '901':
-          description: Is Referenced
   '/specif/v1.0/hierarchies':
     get:
       tags:
@@ -744,7 +742,7 @@ paths:
     post:
       tags:
         - hierarchy
-      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique in the project scope. If no ID is supplied, it is generated before insertion. ?parent=nodeId - the sub-tree will be inserted as first child; ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level.
+      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique. If no ID is supplied, it is generated before insertion. ?parent=nodeId - the sub-tree will be inserted as first child; ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level.
       operationId: createHierarchy
       consumes:
         - application/json-patch+json
@@ -849,7 +847,7 @@ paths:
     post:
       tags:
         - file
-      summary: Create a file; the supplied ID must be unique in the project scope. 
+      summary: Create a file; the supplied ID must be unique. 
       operationId: createFile
       consumes:
         - application/json-patch+json
@@ -929,6 +927,8 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
+        '901':
+          description: Is Referenced
 definitions:
   project:
     type: object
