@@ -699,7 +699,7 @@ paths:
     delete:
       tags:
         - statement
-      summary: Delete the statement; the supplied ID must exist. Return an error if there are depending model elements. ?mode=forced results in deleting all directly and indirectly depending model elements.
+      summary: Delete the statement; the supplied ID must exist.
       operationId: deleteStatementById
       consumes: []
       produces:
@@ -935,6 +935,8 @@ definitions:
     properties:
       id:
         type: string
+      isExtension:
+        type: boolean  
       changedAt:
         format: date-time
         type: string
@@ -990,7 +992,7 @@ definitions:
         uniqueItems: false
         type: array
         items:
-          $ref: '#/definitions/language'
+          $ref: '#/definitions/languageValue'
   enumValue:
     type: object
     properties:
@@ -998,7 +1000,7 @@ definitions:
         type: string
       title:
         $ref: '#/definitions/value'
-  language:
+  languageValue:
     type: object
     properties:
       text:
