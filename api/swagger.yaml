@@ -217,6 +217,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/dataType'
+        '404':
+          description: Not Found
   '/specif/v1.0/propertyClasses':
     get:
       tags:
@@ -322,6 +324,31 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
+  '/specif/v1.0/propertyClasses/{id}/allRevisions':
+    get:
+      tags:
+        - propertyClass
+      summary: Return all property class revisions for the supplied ID
+      operationId: getAllPropertyClassRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/propertyClass'
+        '404':
+          description: Not Found
   '/specif/v1.0/resourceClasses':
     get:
       tags:
@@ -427,6 +454,31 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
+  '/specif/v1.0/resourceClasses/{id}/allRevisions':
+    get:
+      tags:
+        - resourceClass
+      summary: Return all resource class revisions for the supplied ID
+      operationId: getAllResourceClassRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/resourceClass'
+        '404':
+          description: Not Found
   '/specif/v1.0/statementClass':
     get:
       tags:
@@ -532,6 +584,31 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
+  '/specif/v1.0/statementClasses/{id}/allRevisions':
+    get:
+      tags:
+        - statementClass
+      summary: Return all statement class revisions for the supplied ID
+      operationId: getAllStatementClassRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/statementClass'
+        '404':
+          description: Not Found
   '/specif/v1.0/resources':
     get:
       tags:
@@ -637,6 +714,31 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
+  '/specif/v1.0/resources/{id}/allRevisions':
+    get:
+      tags:
+        - resource
+      summary: Return all resource revisions for the supplied ID
+      operationId: getAllResourceRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/resource'
+        '404':
+          description: Not Found
   '/specif/v1.0/statements':
     get:
       tags:
@@ -738,6 +840,31 @@ paths:
           description: Success
         '400':
           description: Bad Request
+        '404':
+          description: Not Found
+  '/specif/v1.0/statements/{id}/allRevisions':
+    get:
+      tags:
+        - statement
+      summary: Return all statement revisions for the supplied ID
+      operationId: getAllStatementRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/statement'
         '404':
           description: Not Found
   '/specif/v1.0/hierarchies':
@@ -847,6 +974,31 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
+  '/specif/v1.0/hierarchies/{id}/allRevisions':
+    get:
+      tags:
+        - hierarchy
+      summary: Return all hierarchy revisions for the supplied ID
+      operationId: getAllHierarchyRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/node'
+        '404':
+          description: Not Found
   '/specif/v1.0/files':
     get:
       tags:
@@ -952,6 +1104,31 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
+  '/specif/v1.0/files/{id}/allRevisions':
+    get:
+      tags:
+        - file
+      summary: Return all file revisions for the supplied ID
+      operationId: getAllFileRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/file'
+        '404':
+          description: Not Found
 definitions:
   project:
     type: object
