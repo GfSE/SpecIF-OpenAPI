@@ -194,7 +194,7 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  '/specif/v1.0/dataTypes/{id}/allRevisions':
+  '/specif/v1.0/dataTypes/{id}/revisions':
     get:
       tags:
         - dataType
@@ -324,7 +324,7 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  '/specif/v1.0/propertyClasses/{id}/allRevisions':
+  '/specif/v1.0/propertyClasses/{id}/revisions':
     get:
       tags:
         - propertyClass
@@ -454,7 +454,7 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  '/specif/v1.0/resourceClasses/{id}/allRevisions':
+  '/specif/v1.0/resourceClasses/{id}/revisions':
     get:
       tags:
         - resourceClass
@@ -584,7 +584,7 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  '/specif/v1.0/statementClasses/{id}/allRevisions':
+  '/specif/v1.0/statementClasses/{id}/revisions':
     get:
       tags:
         - statementClass
@@ -714,7 +714,7 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  '/specif/v1.0/resources/{id}/allRevisions':
+  '/specif/v1.0/resources/{id}/revisions':
     get:
       tags:
         - resource
@@ -842,7 +842,7 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/statements/{id}/allRevisions':
+  '/specif/v1.0/statements/{id}/revisions':
     get:
       tags:
         - statement
@@ -974,7 +974,7 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/hierarchies/{id}/allRevisions':
+  '/specif/v1.0/hierarchies/{id}/revisions':
     get:
       tags:
         - hierarchy
@@ -1104,7 +1104,7 @@ paths:
           description: Not Found
         '901':
           description: Is Referenced
-  '/specif/v1.0/files/{id}/allRevisions':
+  '/specif/v1.0/files/{id}/revisions':
     get:
       tags:
         - file
