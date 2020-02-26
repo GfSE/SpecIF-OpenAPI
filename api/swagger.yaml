@@ -124,7 +124,7 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/dataTypes/{id}/allRevisions':
+  '/specif/v1.0/dataTypes/{id}/revisions':
     get:
       tags:
         - DataType
@@ -147,6 +147,141 @@ paths:
             type: array
             items:
               $ref: '#/definitions/DataType'
+  /specif/v1.0/files:
+    get:
+      tags:
+        - File
+      summary: Return all file descriptions for all available files in all revisions.
+      operationId: GetAllFiles
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: projectID
+          in: query
+          description: An optional projectID as filter.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/File'
+    put:
+      tags:
+        - File
+      summary: Update the file; the supplied ID must exist.
+      operationId: UpdateFile
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: file
+          in: body
+          description: ''
+          required: false
+          schema:
+            $ref: '#/definitions/IFormFile'
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - File
+      summary: Create a file; the supplied ID must be unique.
+      operationId: CreateNewFile
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: file
+          in: body
+          description: ''
+          required: false
+          schema:
+            $ref: '#/definitions/IFormFile'
+      responses:
+        '200':
+          description: Success
+  '/specif/v1.0/files/{id}':
+    get:
+      tags:
+        - File
+      summary: Returns a specific file.
+      operationId: GetFileById
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: revision
+          in: query
+          description: ''
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - File
+      summary: Delete the file; the supplied ID must exist.
+      operationId: DeleteFile
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: revision
+          in: query
+          description: ''
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success
+  '/specif/v1.0/files/{id}/revisions':
+    get:
+      tags:
+        - File
+      summary: Returns all available file revisions as SpecIF file descriptions.
+      operationId: GetAllFileRevisions
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The file id.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            uniqueItems: false
+            type: array
+            items:
+              $ref: '#/definitions/File'
   /specif/v1.0/hierarchies:
     get:
       tags:
@@ -228,11 +363,7 @@ paths:
         - Hierarchy
       summary: Get hierarchy with a specific ID.
       operationId: GetHierarchyById
-      consumes:
-        - application/json-patch+json
-        - application/json
-        - text/json
-        - application/*+json
+      consumes: []
       produces:
         - application/json
       parameters:
@@ -247,12 +378,11 @@ paths:
           required: false
           type: string
         - name: depth
-          in: body
+          in: query
           description: The maximum depth of child nodes to return. If not set the complete hierarchy depth is returned.
           required: false
-          schema:
-            format: int32
-            type: integer
+          type: integer
+          format: int32
       responses:
         '200':
           description: Success
@@ -280,7 +410,7 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/hierarchies/{id}/allRevisions':
+  '/specif/v1.0/hierarchies/{id}/revisions':
     get:
       tags:
         - Hierarchy
@@ -318,7 +448,7 @@ paths:
     put:
       tags:
         - Hierarchy
-      summary: Moves an existion node and all child nodes to a new parent.
+      summary: Moves an existing node and all child nodes to a new parent.
       operationId: MoveNode
       consumes: []
       produces:
@@ -562,7 +692,7 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/propertyClasses/{id}/allRevisions':
+  '/specif/v1.0/propertyClasses/{id}/revisions':
     get:
       tags:
         - PropertyClass
@@ -597,7 +727,7 @@ paths:
       parameters:
         - name: projectID
           in: query
-          description: An optional project ID. The endpount then returns only resources for the given project.
+          description: An optional project ID. The endpoint then returns only resources for the given project.
           required: false
           type: string
       responses:
@@ -611,7 +741,7 @@ paths:
     put:
       tags:
         - Resource
-      summary: Update a resource. The ID included in the reource data must exist.
+      summary: Update a resource. The ID included in the resource data must exist.
       operationId: UpdateResource
       consumes:
         - application/json-patch+json
@@ -708,7 +838,7 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/resources/{id}/allRevisions':
+  '/specif/v1.0/resources/{id}/revisions':
     get:
       tags:
         - Resource
@@ -847,7 +977,7 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/resourceClasses/{id}/allRevisions':
+  '/specif/v1.0/resourceClasses/{id}/revisions':
     get:
       tags:
         - ResourceClass
@@ -1097,7 +1227,7 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-  '/specif/v1.0/statements/{id}/allRevisions':
+  '/specif/v1.0/statements/{id}/revisions':
     get:
       tags:
         - Statement
@@ -1239,7 +1369,7 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/statementClasses/{id}/allRevisions':
+  '/specif/v1.0/statementClasses/{id}/revisions':
     get:
       tags:
         - StatementClass
@@ -1269,9 +1399,9 @@ definitions:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       revision:
         type: string
       replaces:
@@ -1305,25 +1435,72 @@ definitions:
         type: string
       changedBy:
         type: string
-  Value:
-    type: object
-    properties: {}
   EnumValue:
     type: object
     properties:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
+  File:
+    type: object
+    properties:
+      id:
+        type: string
+      title:
+        type: object
+      description:
+        type: object
+      revision:
+        type: string
+      replaces:
+        uniqueItems: false
+        type: array
+        items:
+          type: string
+      type:
+        type: string
+      changedAt:
+        format: date-time
+        type: string
+      changedBy:
+        type: string
+  IFormFile:
+    type: object
+    properties:
+      contentType:
+        type: string
+        readOnly: true
+      contentDisposition:
+        type: string
+        readOnly: true
+      headers:
+        type: object
+        additionalProperties:
+          uniqueItems: false
+          type: array
+          items:
+            type: string
+        readOnly: true
+      length:
+        format: int64
+        type: integer
+        readOnly: true
+      name:
+        type: string
+        readOnly: true
+      fileName:
+        type: string
+        readOnly: true
   Node:
     type: object
     properties:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       revision:
         type: string
       replaces:
@@ -1415,6 +1592,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/File'
+  Value:
+    type: object
+    properties: {}
   Rights:
     type: object
     properties:
@@ -1441,9 +1621,9 @@ definitions:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       revision:
         type: string
       replaces:
@@ -1466,9 +1646,9 @@ definitions:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       revision:
         type: string
       replaces:
@@ -1503,9 +1683,9 @@ definitions:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       revision:
         type: string
       replaces:
@@ -1531,12 +1711,12 @@ definitions:
         uniqueItems: false
         type: array
         items:
-          type: string
+          $ref: '#/definitions/Key'
       objectClasses:
         uniqueItems: false
         type: array
         items:
-          type: string
+          $ref: '#/definitions/Key'
       changedAt:
         format: date-time
         type: string
@@ -1548,9 +1728,9 @@ definitions:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       class:
         $ref: '#/definitions/Key'
       language:
@@ -1583,9 +1763,9 @@ definitions:
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       class:
         $ref: '#/definitions/Key'
       language:
@@ -1611,29 +1791,6 @@ definitions:
         $ref: '#/definitions/Key'
       object:
         $ref: '#/definitions/Key'
-      changedAt:
-        format: date-time
-        type: string
-      changedBy:
-        type: string
-  File:
-    type: object
-    properties:
-      id:
-        type: string
-      title:
-        $ref: '#/definitions/Value'
-      description:
-        $ref: '#/definitions/Value'
-      revision:
-        type: string
-      replaces:
-        uniqueItems: false
-        type: array
-        items:
-          type: string
-      type:
-        type: string
       changedAt:
         format: date-time
         type: string
@@ -1666,9 +1823,9 @@ definitions:
       value:
         $ref: '#/definitions/Value'
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       class:
         $ref: '#/definitions/Key'
       revision:
