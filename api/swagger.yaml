@@ -892,7 +892,7 @@ paths:
     post:
       tags:
         - hierarchy
-      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique. If no ID is supplied, it is generated before insertion. Query ?parent=nodeId - the sub-tree will be inserted as first child; query ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level.
+      summary: Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique. If no ID is supplied, it is generated before insertion. Query ?parent=nodeId - the sub-tree will be inserted as first child; query ?predecessor=nodeId - the sub-tree will be inserted after the specified node; no query - the sub-tree will be inserted as first element at root level. Without query string, the node (sub-tree) is inserted as first element at root level.
       operationId: createHierarchy
       consumes:
         - application/json-patch+json
@@ -912,7 +912,7 @@ paths:
     put:
       tags:
         - hierarchy
-      summary: Update an existing hierarchy (sub-tree) with supplied nodes; the supplied ID must exist somewhere in any hierarchy. Query ?parent=nodeId - the sub-tree will be moved and inserted as first child; query ?predecessor=nodeId - the sub-tree will be moved and inserted after the specified node.
+      summary: Update an existing hierarchy (sub-tree) with supplied nodes; the supplied ID must exist somewhere in any hierarchy. Query ?parent=nodeId - the sub-tree will be moved and inserted as first child; query ?predecessor=nodeId - the sub-tree will be moved and inserted after the specified node. Without query string, the node (sub-tree) is not moved.
       operationId: updateHierarchy
       consumes:
         - application/json-patch+json
