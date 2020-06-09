@@ -311,7 +311,7 @@ paths:
     put:
       tags:
         - Hierarchy
-      summary: Update an existing hierarchy node.
+      summary: "Update an existing hierarchy node.\r\nthe supplied ID must exist somewhere in any hierarchy. \r\nQuery ?parent=nodeId - the sub-tree will be moved and inserted as first child; \r\nquery ?predecessor=nodeId - the sub-tree will be moved and inserted after the specified node. \r\nWithout query string, the node (sub-tree) is not moved."
       operationId: UpdateHierarchy
       consumes:
         - application/json-patch+json
@@ -327,13 +327,23 @@ paths:
           required: false
           schema:
             $ref: '#/definitions/Node'
+        - name: parent
+          in: query
+          description: An optional parent node id. The sub-tree will be inserted as first child.
+          required: false
+          type: string
+        - name: predecessor
+          in: query
+          description: An optional prdecessor node id. The sub-tree will be inserted after the specified node.
+          required: false
+          type: string
       responses:
         '200':
           description: Success
     post:
       tags:
         - Hierarchy
-      summary: Add a new hierarchy.
+      summary: "Create a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique. \r\nIf no ID is supplied, it is generated before insertion. \r\nQuery ?parent=nodeId - the sub-tree will be inserted as first child; \r\nquery ?predecessor=nodeId - the sub-tree will be inserted after the specified node; \r\nno query - the sub-tree will be inserted as first element at root level. \r\nWithout query string, the node (sub-tree) is inserted as first element at root level."
       operationId: CreateNewHierarchy
       consumes:
         - application/json-patch+json
@@ -349,9 +359,19 @@ paths:
           required: false
           schema:
             $ref: '#/definitions/Node'
-        - name: parentNodeId
+        - name: parent
           in: query
-          description: An optional parent node id.
+          description: An optional parent node id. The sub-tree will be inserted as first child.
+          required: false
+          type: string
+        - name: predecessor
+          in: query
+          description: An optional prdecessor node id. The sub-tree will be inserted after the specified node.
+          required: false
+          type: string
+        - name: projectId
+          in: query
+          description: "The projectId. If the id is given, the new hierarchy will be added to the specific project. \r\n            Only usfull for new hierarchies - no parent or predecessor given."
           required: false
           type: string
       responses:
@@ -444,34 +464,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Node'
-  /specif/v1.0/hierarchies/move:
-    put:
-      tags:
-        - Hierarchy
-      summary: Moves an existing node and all child nodes to a new parent.
-      operationId: MoveNode
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: nodeId
-          in: query
-          description: The id of the node to move.
-          required: false
-          type: string
-        - name: newParentId
-          in: query
-          description: The id of the new parent.
-          required: false
-          type: string
-        - name: newSiblingId
-          in: query
-          description: "The id of the new sibling. \r\n            If nothing is set the node will be the first element in the new location list."
-          required: false
-          type: string
-      responses:
-        '200':
-          description: Success
   /specif/v1.0/primitiveTypes:
     get:
       tags:
@@ -508,6 +500,28 @@ paths:
             type: array
             items:
               $ref: '#/definitions/ProjectDescriptor'
+    put:
+      tags:
+        - Project
+      summary: Update a project with the given ID by including the data into an existing project. The project with the supplied ID must exist.
+      operationId: UpdateProject
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: value
+          in: body
+          description: The SpecIF data to include.
+          required: false
+          schema:
+            $ref: '#/definitions/SpecIF'
+      responses:
+        '200':
+          description: Success
     post:
       tags:
         - Project
@@ -521,12 +535,16 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: value
+        - name: specIF
           in: body
           description: The SpecIF data defining the project.
           required: false
           schema:
             $ref: '#/definitions/SpecIF'
+        - name: integrationId
+          in: query
+          required: false
+          type: string
       responses:
         '200':
           description: Success
@@ -534,7 +552,7 @@ paths:
     get:
       tags:
         - Project
-      summary: Return the project with the given ID; to limit the size only ??? are delivered.
+      summary: Return the project with the given ID.
       operationId: GetProjectByID
       consumes: []
       produces:
@@ -545,38 +563,22 @@ paths:
           description: The project id.
           required: true
           type: string
+        - name: hierarchyFilter
+          in: query
+          description: An optional comma seperated list of hierarchy root node IDs to limit the output of selected hierarchies.
+          required: false
+          type: string
+        - name: includeMetedata
+          in: query
+          description: Set to true if the metadata should be included (e.g. Resource Classes etc.)
+          required: false
+          type: boolean
+          default: true
       responses:
         '201':
           description: Success
           schema:
             $ref: '#/definitions/SpecIF'
-    put:
-      tags:
-        - Project
-      summary: Update a project with the gibven ID by including the data into an existing project. The project with the supplied ID must exist.
-      operationId: UpdateProject
-      consumes:
-        - application/json-patch+json
-        - application/json
-        - text/json
-        - application/*+json
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: The project ID.
-          required: true
-          type: string
-        - name: value
-          in: body
-          description: The SpecIF data to include.
-          required: false
-          schema:
-            $ref: '#/definitions/SpecIF'
-      responses:
-        '200':
-          description: Success
     delete:
       tags:
         - Project
@@ -614,6 +616,208 @@ paths:
               $ref: '#/definitions/PropertyClass'
         '400':
           description: Bad Request
+    put:
+      tags:
+        - PropertyClass
+      summary: Update the property class; the supplied ID must exist.
+      operationId: UpdatePropertyClass
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: dataType.ID
+          in: query
+          required: false
+          type: string
+        - name: dataType.Revision
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.ServiceName
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.ServiceAddress
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.ServicePort
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: dataType.DataSource.ServiceDescription
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.ServiceNativeAccess
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.ServiceKind
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.IconURL
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.ID
+          in: query
+          required: false
+          type: string
+        - name: dataType.DataSource.MetadataRead
+          in: query
+          required: false
+          type: boolean
+        - name: dataType.DataSource.MetadataWrite
+          in: query
+          required: false
+          type: boolean
+        - name: dataType.DataSource.DataRead
+          in: query
+          required: false
+          type: boolean
+        - name: dataType.DataSource.DataWrite
+          in: query
+          required: false
+          type: boolean
+        - name: dataType.DataSource.Tags
+          in: query
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          uniqueItems: false
+        - name: multiple
+          in: query
+          required: false
+          type: boolean
+        - name: projectID
+          in: query
+          required: false
+          type: string
+        - name: title
+          in: query
+          required: false
+          type: string
+        - name: description
+          in: query
+          required: false
+          type: string
+        - name: changedAt
+          in: query
+          required: false
+          type: string
+          format: date-time
+        - name: changedBy
+          in: query
+          required: false
+          type: string
+        - name: id
+          in: query
+          required: false
+          type: string
+        - name: iD
+          in: query
+          required: false
+          type: string
+        - name: revision
+          in: query
+          required: false
+          type: string
+        - name: replaces
+          in: query
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          uniqueItems: false
+        - name: dataSource.ServiceName
+          in: query
+          required: false
+          type: string
+        - name: dataSource.ServiceAddress
+          in: query
+          required: false
+          type: string
+        - name: dataSource.ServicePort
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: dataSource.ServiceDescription
+          in: query
+          required: false
+          type: string
+        - name: dataSource.ServiceNativeAccess
+          in: query
+          required: false
+          type: string
+        - name: dataSource.ServiceKind
+          in: query
+          required: false
+          type: string
+        - name: dataSource.IconURL
+          in: query
+          required: false
+          type: string
+        - name: dataSource.ID
+          in: query
+          required: false
+          type: string
+        - name: dataSource.MetadataRead
+          in: query
+          required: false
+          type: boolean
+        - name: dataSource.MetadataWrite
+          in: query
+          required: false
+          type: boolean
+        - name: dataSource.DataRead
+          in: query
+          required: false
+          type: boolean
+        - name: dataSource.DataWrite
+          in: query
+          required: false
+          type: boolean
+        - name: dataSource.Tags
+          in: query
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          uniqueItems: false
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - PropertyClass
+      summary: Create a new property class.
+      operationId: CreatePropertyClass
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - name: propertyClass
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/PropertyClass'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PropertyClass'
   '/specif/v1.0/propertyClasses/{id}':
     get:
       tags:
@@ -643,28 +847,6 @@ paths:
           description: Bad Request
         '404':
           description: Not Found
-    put:
-      tags:
-        - PropertyClass
-      summary: Update the property class; the supplied ID must exist.
-      operationId: UpdatePropertyClass
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: The property class ID.
-          required: true
-          type: string
-        - name: revision
-          in: query
-          description: The property class revision.
-          required: false
-          type: string
-      responses:
-        '200':
-          description: Success
     delete:
       tags:
         - PropertyClass
@@ -777,10 +959,15 @@ paths:
       parameters:
         - name: resource
           in: body
-          description: ''
+          description: The resource data.
           required: false
           schema:
             $ref: '#/definitions/Resource'
+        - name: projectID
+          in: query
+          description: 'The optional project ID. If a project ID is not given, the data is added to a default project.'
+          required: false
+          type: string
       responses:
         '201':
           description: Success
@@ -974,6 +1161,10 @@ paths:
           description: The resource class ID.
           required: true
           type: string
+        - name: revision
+          in: query
+          required: false
+          type: string
       responses:
         '200':
           description: Success
@@ -1016,7 +1207,27 @@ paths:
       parameters:
         - name: projectID
           in: query
-          description: The project ID.
+          description: The optional project ID to filter statements by project.
+          required: false
+          type: string
+        - name: subjectID
+          in: query
+          description: The optional subjectID to filter statements only sourcing the element with the given id.
+          required: false
+          type: string
+        - name: subjectRevision
+          in: query
+          description: An optional subject revision. Only usefull toghther with subjectID.
+          required: false
+          type: string
+        - name: objectID
+          in: query
+          description: The optional objectID to filter statements only targeting the element with the given id.
+          required: false
+          type: string
+        - name: objectRevision
+          in: query
+          description: An optional object revision. Only usefull toghther with objectId.
           required: false
           type: string
       responses:
@@ -1066,7 +1277,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: statemenet
+        - name: statement
           in: body
           description: The statement to create.
           required: false
@@ -1131,102 +1342,6 @@ paths:
       responses:
         '200':
           description: Success
-  '/specif/v1.0/statements/subject/{subjectId}':
-    get:
-      tags:
-        - Statement
-      summary: Returns all statements for the subject resource with the given ID and the given revision.
-      operationId: GetStatementsBySubject
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: subjectId
-          in: path
-          description: ''
-          required: true
-          type: string
-        - name: revision
-          in: query
-          description: The subject revision.
-          required: false
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/Statement'
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-  '/specif/v1.0/statements/object/{objectId}':
-    get:
-      tags:
-        - Statement
-      summary: Returns all statements for the object resource with the given ID and the given object revision.
-      operationId: GetStatementsByObject
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: objectId
-          in: path
-          description: ''
-          required: true
-          type: string
-        - name: revision
-          in: query
-          description: The object revision.
-          required: false
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/Statement'
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-  '/specif/v1.0/statements/resource/{resourceId}':
-    get:
-      tags:
-        - Statement
-      summary: Returns all statements for a resource with a given ID and main/latest revision - resource is uses as subject OR object for the statement.
-      operationId: GetAllStatementsForResource
-      consumes: []
-      produces:
-        - application/json
-      parameters:
-        - name: resourceId
-          in: path
-          description: The resource element ID.
-          required: true
-          type: string
-        - name: revision
-          in: query
-          description: The resource revision.
-          required: false
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            uniqueItems: false
-            type: array
-            items:
-              $ref: '#/definitions/Statement'
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
   '/specif/v1.0/statements/{id}/revisions':
     get:
       tags:
@@ -1328,7 +1443,7 @@ paths:
     get:
       tags:
         - StatementClass
-      summary: Returns the main/latest revision of the statement class with the given ID.
+      summary: Returns the statement class with the given ID and revision.
       operationId: GetStatementClassById
       consumes: []
       produces:
@@ -1336,11 +1451,12 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ''
+          description: The statement class ID.
           required: true
           type: string
         - name: revision
           in: query
+          description: The statement class revision identifier.
           required: false
           type: string
       responses:
@@ -1365,6 +1481,10 @@ paths:
           in: path
           description: The statement class ID.
           required: true
+          type: string
+        - name: revision
+          in: query
+          required: false
           type: string
       responses:
         '200':
@@ -1440,7 +1560,7 @@ definitions:
     properties:
       id:
         type: string
-      title:
+      value:
         type: object
   File:
     type: object
@@ -1523,24 +1643,72 @@ definitions:
   ProjectDescriptor:
     type: object
     properties:
+      $schema:
+        type: object
       id:
         type: string
-      changedAt:
+      title:
+        type: object
+      description:
+        type: object
+      isExtension:
+        type: boolean
+      generator:
+        type: string
+      generatorVersion:
+        type: string
+      rights:
+        $ref: '#/definitions/Rights'
+      createdAt:
         format: date-time
+        type: string
+      createdBy:
+        $ref: '#/definitions/Creator'
+  Rights:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      url:
+        type: string
+  Creator:
+    type: object
+    properties:
+      familyName:
+        type: string
+      givenName:
+        type: string
+      org:
+        $ref: '#/definitions/Org'
+      email:
+        $ref: '#/definitions/Email'
+  Org:
+    type: object
+    properties:
+      organizationName:
+        type: string
+  Email:
+    type: object
+    properties:
+      type:
+        type: string
+      value:
         type: string
   SpecIF:
     type: object
     properties:
+      $schema:
+        type: object
       id:
         type: string
       title:
-        $ref: '#/definitions/Value'
+        type: object
       description:
-        $ref: '#/definitions/Value'
+        type: object
       isExtension:
         type: boolean
-      specifVersion:
-        type: string
       generator:
         type: string
       generatorVersion:
@@ -1592,29 +1760,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/File'
-  Value:
-    type: object
-    properties: {}
-  Rights:
-    type: object
-    properties:
-      title:
-        type: string
-      type:
-        type: string
-      url:
-        type: string
-  Creator:
-    type: object
-    properties:
-      familyName:
-        type: string
-      givenName:
-        type: string
-      org:
-        $ref: '#/definitions/Org'
-      email:
-        $ref: '#/definitions/Email'
   PropertyClass:
     type: object
     properties:
@@ -1796,18 +1941,6 @@ definitions:
         type: string
       changedBy:
         type: string
-  Org:
-    type: object
-    properties:
-      organizationName:
-        type: string
-  Email:
-    type: object
-    properties:
-      type:
-        type: string
-      value:
-        type: string
   Key:
     type: object
     properties:
@@ -1821,7 +1954,7 @@ definitions:
       id:
         type: string
       value:
-        $ref: '#/definitions/Value'
+        type: object
       title:
         type: object
       description:
@@ -1843,4 +1976,12 @@ definitions:
   AlternativeId:
     type: object
     properties: {}
+securityDefinitions:
+  Bearer:
+    name: Authorization
+    in: header
+    type: apiKey
+    description: 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"'
+security:
+  - Bearer: []
 tags: []
