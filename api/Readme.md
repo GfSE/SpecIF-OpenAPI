@@ -1,1 +1,1 @@
-Open the swagger.yaml file with http://editor.swagger.io/
+Open the swagger.yaml file with https://editor.swagger.io/
