@@ -4,7 +4,7 @@
 Web API definition for the Specification Integration Facility (SpecIF).
 
 You can find here the Web API definition to access SpecIF data using REST services. The API definition is done using the OpenAPI standard 
-(fomerly known as Swagger). Have a look at https://www.openapis.org/ for details.
+(formerly known as Swagger). Have a look at https://www.openapis.org/ for details.
 
 The swagger file is located in the sub-folder [api](./api/swagger.yaml).
 
