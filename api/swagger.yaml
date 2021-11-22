@@ -51,13 +51,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - DataType
@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/dataTypes/{id}:
@@ -140,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/dataTypes/{id}/revisions:
     get:
       tags:
@@ -168,7 +168,7 @@ paths:
     get:
       tags:
         - File
-      summary: Get all file descriptors.
+      summary: Get all files.
       parameters:
         - name: projectID
           in: query
@@ -211,13 +211,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - File
@@ -245,7 +245,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/files/{id}:
@@ -285,11 +285,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/SpecifId'
-        - name: forced
-          in: query
-          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
-          schema:
-            type: boolean
       responses:
         '200':
           description: file descriptor deleted.
@@ -300,7 +295,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/files/{id}/revisions:
     get:
       tags:
@@ -396,13 +391,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - Hierarchy
@@ -445,7 +440,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/hierarchies/{id}:
@@ -564,13 +559,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - Project
@@ -598,7 +593,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/projects/{id}:
@@ -689,17 +684,225 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - PropertyClass
       summary: Update the property class; the supplied ID must exist.
+      parameters:
+        - name: dataType.iD
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.revision
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.serviceName
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.serviceAddress
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.servicePort
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: dataType.dataSource.serviceDescription
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.serviceNativeAccess
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.serviceKind
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.iconURL
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.iD
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataType.dataSource.metadataRead
+          in: query
+          schema:
+            type: boolean
+        - name: dataType.dataSource.metadataWrite
+          in: query
+          schema:
+            type: boolean
+        - name: dataType.dataSource.dataRead
+          in: query
+          schema:
+            type: boolean
+        - name: dataType.dataSource.dataWrite
+          in: query
+          schema:
+            type: boolean
+        - name: dataType.dataSource.tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            nullable: true
+        - name: multiple
+          in: query
+          schema:
+            type: boolean
+            nullable: true
+        - name: format
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: unit
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: values
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpecifValue'
+            nullable: true
+        - name: title
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: description
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SpecifMultiLanguageText'
+            nullable: true
+        - name: projectID
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: changedAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: changedBy
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: id
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: iD
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: revision
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: replaces
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            nullable: true
+        - name: dataSource.serviceName
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.serviceAddress
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.servicePort
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: dataSource.serviceDescription
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.serviceNativeAccess
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.serviceKind
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.iconURL
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.iD
+          in: query
+          schema:
+            type: string
+            nullable: true
+        - name: dataSource.metadataRead
+          in: query
+          schema:
+            type: boolean
+        - name: dataSource.metadataWrite
+          in: query
+          schema:
+            type: boolean
+        - name: dataSource.dataRead
+          in: query
+          schema:
+            type: boolean
+        - name: dataSource.dataWrite
+          in: query
+          schema:
+            type: boolean
+        - name: dataSource.tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            nullable: true
       requestBody:
         description: The property class to update; the supplied ID must exist.
         content:
@@ -723,7 +926,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/propertyClasses/{id}:
@@ -778,7 +981,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/propertyClasses/{id}/revisions:
     get:
       tags:
@@ -851,13 +1054,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - Resource
@@ -885,7 +1088,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/resources/{id}:
@@ -940,7 +1143,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/resources/{id}/revisions:
     get:
       tags:
@@ -1005,13 +1208,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - ResourceClass
@@ -1039,7 +1242,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/resourceClasses/{id}:
@@ -1094,7 +1297,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/resourceClasses/{id}/revisions:
     get:
       tags:
@@ -1195,13 +1398,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - Statement
@@ -1229,7 +1432,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/statements/{id}:
@@ -1338,13 +1541,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
     put:
       tags:
         - StatementClass
@@ -1372,7 +1575,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
   /specif/v1.1/statementClasses/{id}:
@@ -1427,7 +1630,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HttpStatusDetails'
+                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/statementClasses/{id}/revisions:
     get:
       tags:
@@ -2017,7 +2220,7 @@ components:
           - resources
           - statements
           - hierarchies
-    HttpStatusDetails:
+    ProblemDetails:
       type: object
       properties:
         type:
