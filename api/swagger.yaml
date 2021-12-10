@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: SpecIF Web API
   description: Web API for the Specification Integration Facility (SpecIF).
@@ -170,14 +170,14 @@ paths:
         - File
       summary: Get all file descriptors.
       parameters:
-        - name: projectID
+        - name: project
           in: query
-          description: An optional project ID as filter.
+          description: Filter file descriptors by project with the given Id.
           schema:
             $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: List of files returned.
+          description: List of file descriptors returned.
           content:
             application/json:
               schema:
@@ -187,25 +187,25 @@ paths:
     post:
       tags:
         - File
-      summary: Create the file descriptor; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
+      summary: Create (upload) the file; the supplied id and filename must be unique. The filename may contain a path with '/' as separators. If no id or filename is supplied, it is created before insertion. Upon upload, a SpecIF file descriptor is automatically generated.
       requestBody:
-        description: The file descriptor to create; the supplied ID must not exist.
+        description: The file to create; the supplied ID must not exist.
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
+                id:
+                  type: string
                 file:
                   type: string
-                  description: ''
                   format: binary
-                  nullable: true
             encoding:
               file:
                 style: form
       responses:
         '201':
-          description: file descriptor created
+          description: file created
         '400':
           description: Bad Request
           content:
@@ -213,7 +213,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/HttpStatusDetails'
         '409':
-          description: Identifier exists already
+          description: Filename exists already
           content:
             application/json:
               schema:
@@ -221,25 +221,25 @@ paths:
     put:
       tags:
         - File
-      summary: Update the file descriptor.
+      summary: Update (upload) the file; the supplied id and filename must exist. The filename may contain a path with '/' as separators. Upon upload, the SpecIF file descriptor is automatically updated. 
       requestBody:
-        description: The file descriptor to update; the supplied ID must exist.
+        description: The file to update; the supplied id and filename must exist.
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
+                id:
+                  type: string
                 file:
                   type: string
-                  description: ''
                   format: binary
-                  nullable: true
             encoding:
               file:
                 style: form
       responses:
         '200':
-          description: file descriptor updated
+          description: file updated
         '400':
           description: Bad Request
           content:
@@ -252,7 +252,7 @@ paths:
     get:
       tags:
         - File
-      summary: Get the file descriptor.
+      summary: Get the file descriptor including the file name = relative url.
       parameters:
         - name: id
           in: path
@@ -277,7 +277,7 @@ paths:
     delete:
       tags:
         - File
-      summary: Delete the file descriptor; returns an error if there are referencing elements.
+      summary: Delete the file descriptor and the file; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
@@ -296,7 +296,7 @@ paths:
         '404':
           description: Not Found
         '409':
-          description: file descriptor is referenced.
+          description: file or file descriptor is referenced.
           content:
             application/json:
               schema:
@@ -332,8 +332,9 @@ paths:
       parameters:
         - name: project
           in: query
+          description: Filter hierarchies by project with the given Id.
           schema:
-            type: string
+            $ref: '#/components/schemas/SpecifId'
         - name: rootNodesOnly
           in: query
           schema:
@@ -358,21 +359,18 @@ paths:
           schema:
             type: string
             description: An optional parent node ID. The sub-tree will be inserted as first child.
-            nullable: true
         - name: predecessor
           in: query
           description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
           schema:
             type: string
             description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
-            nullable: true
         - name: projectId
           in: query
           description: The project ID. If the ID is given, the new hierarchy will be added to the specific project. Only useful for new hierarchies - no parent or predecessor given.
           schema:
             type: string
             description: The project ID. If the ID is given, the new hierarchy will be added to the specific project. Only useful for new hierarchies - no parent or predecessor given.
-            nullable: true
       requestBody:
         description: The hierarchy to create.
         content:
@@ -414,14 +412,12 @@ paths:
           schema:
             type: string
             description: An optional parent node ID. The sub-tree will be inserted as first child.
-            nullable: true
         - name: predecessor
           in: query
           description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
           schema:
             type: string
             description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
-            nullable: true
       requestBody:
         description: The hierarchy node to update; the supplied ID must exist.
         content:
@@ -527,7 +523,7 @@ paths:
     get:
       tags:
         - Project
-      summary: Get all projects; to limit the size only root properties are delivered.
+      summary: Get all projects; to limit the size only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties are delivered.
       responses:
         '200':
           description: List of projects returned
@@ -536,11 +532,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectDescriptor'
+                  $ref: '#/components/schemas/SpecifProject'
     post:
       tags:
         - Project
-      summary: Create the project; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
+      summary: Create the project; the supplied ID must be unique. If no ID is supplied, it is created before insertion. To limit the size of the request body, it is advised to send only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties at first and to post resources, statements and hierarchies subsequently.
       requestBody:
         description: The project to create; the supplied ID must not exist.
         content:
@@ -576,7 +572,7 @@ paths:
         - Project
       summary: Update the project.
       requestBody:
-        description: The project to update; the supplied ID must exist.
+        description: The project to update; the supplied ID must exist. To limit the size of the request body, it is advised to send only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties at first and to post resources, statements and hierarchies subsequently. Any existing elements will be updated, any additional elements will be created and any missing elements will be deleted.
         content:
           application/json-patch+json:
             schema:
@@ -808,13 +804,16 @@ paths:
         - Resource
       summary: Get all resources.
       parameters:
-        - name: projectID
+        - name: project
           in: query
-          description: An optional project ID. The endpoint then returns only resources for the given project.
+          description: Filter resources by project with the given Id.
           schema:
-            type: string
-            description: An optional project ID. The endpoint then returns only resources for the given project.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
+        - name: class
+          in: query
+          description: Filter resources belonging to a class with the given Id.
+          schema:
+            $ref: '#/components/schemas/SpecifKey'
       responses:
         '200':
           description: List of resources returned.
@@ -962,6 +961,29 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpecifResource'
+        '404':
+          description: Not Found
+  /specif/v1.1/resources/{id}/statements:
+    get:
+      tags:
+        - Resource
+      summary: Get all statements of the resource.
+      parameters:
+        - name: id
+          in: path
+          description: The resource ID.
+          required: true
+          schema:
+            $ref: '#/components/schemas/SpecifId'
+      responses:
+        '200':
+          description: All statements of the resource returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpecifStatement'
         '404':
           description: Not Found
   /specif/v1.1/resourceClasses:
@@ -1124,41 +1146,31 @@ paths:
         - Statement
       summary: Get all statements.
       parameters:
-        - name: projectID
+        - name: project
           in: query
-          description: The optional project ID to filter statements by project.
+          description: Filter statements by project with the given Id.
           schema:
-            type: string
-            description: The optional project ID to filter statements by project.
-            nullable: true
-        - name: subjectID
+            $ref: '#/components/schemas/SpecifId'
+        - name: class
           in: query
-          description: The optional subject ID to filter statements only sourcing the element with the given ID.
+          description: Filter statements belonging to a class with the given Id.
           schema:
-            type: string
-            description: The optional subject ID to filter statements only sourcing the element with the given ID.
-            nullable: true
-        - name: subjectRevision
+            $ref: '#/components/schemas/SpecifKey'
+        - name: element
           in: query
-          description: An optional subject revision. Only useful together with subject ID.
+          description: Filter statements where the element with the given Id is a subject or an object.
           schema:
-            type: string
-            description: An optional subject revision. Only useful together with subject ID.
-            nullable: true
-        - name: objectID
+            $ref: '#/components/schemas/SpecifKey'
+        - name: subject
           in: query
-          description: The optional object ID to filter statements only targeting the element with the given ID.
+          description: Filter statements where the element with the given Id is a subject.
           schema:
-            type: string
-            description: The optional object ID to filter statements only targeting the element with the given ID.
-            nullable: true
-        - name: objectRevision
+            $ref: '#/components/schemas/SpecifKey'
+        - name: object
           in: query
-          description: An optional object revision. Only useful together with object ID.
+          description: Filter statements where the element with the given Id is an object.
           schema:
-            type: string
-            description: An optional object revision. Only useful together with object ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifKey'
       responses:
         '200':
           description: List of statements returned.
@@ -1910,7 +1922,7 @@ components:
       type: string
       format: uri
       pattern: "^https?:\\/\\/(specif\\.de\\/v1\\.1\\/schema|json\\.schemastore\\.org\\/specif-1\\.1)\\.json$"
-    ProjectDescriptor:
+    SpecifProject:
       type: object
       properties:
         $schema:
