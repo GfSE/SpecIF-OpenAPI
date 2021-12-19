@@ -1521,10 +1521,10 @@ components:
       required:
         - text
     SpecifValue:
-      description: "First option for properties with dataType 'xs:string', second option for all others."
+      description: "First option for properties with dataType 'xs:string', second option for all others. Note that SpecIF represents *all* values including number and boolean as string."
       oneOf:
         - $ref: "#/components/SpecifMultiLanguageText"
-        - $ref: "#/components/SpecifText"
+        - type: string
     SpecifValues:
       description: "If 'multiple' of the propertyClass is undefined or false, the array must contain one item. If the value is unknown, omit the whole property. By default, the class' value applies."
       type: array

@@ -24,82 +24,83 @@ export interface HttpStatusDetails extends null<String, ModelObject> {
 /**
  * 
  * @export
- * @interface ProjectDescriptor
+ * @interface SpecifProject
  */
-export interface ProjectDescriptor {
+export interface SpecifProject {
     /**
      * 
      * @type {SpecifMetaSchema}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     schema: SpecifMetaSchema;
     /**
      * 
      * @type {SpecifId}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     id: SpecifId;
     /**
      * 
      * @type {SpecifRevision}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     revision?: SpecifRevision;
     /**
      * 
      * @type {Array<SpecifMultiLanguageText>}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     title?: Array<SpecifMultiLanguageText>;
     /**
      * 
      * @type {Array<SpecifMultiLanguageText>}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     description?: Array<SpecifMultiLanguageText>;
     /**
      * 
      * @type {boolean}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     isExtension?: boolean;
     /**
      * 
      * @type {string}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     generator?: string;
     /**
      * 
      * @type {string}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     generatorVersion?: string;
     /**
      * 
      * @type {SpecifRights}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     rights?: SpecifRights;
     /**
      * 
      * @type {SpecifDateTime}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     createdAt?: SpecifDateTime;
     /**
      * 
      * @type {SpecifCreatedBy}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     createdBy?: SpecifCreatedBy;
     /**
      * 
      * @type {SpecifNodes}
-     * @memberof ProjectDescriptor
+     * @memberof SpecifProject
      */
     hierarchies: SpecifNodes;
 }
+
 /**
  * 
  * @export
@@ -221,6 +222,7 @@ export interface SpecIF {
      */
     files?: Array<SpecifFile>;
 }
+
 /**
  * A list of pointers to resources resp. statements which have been merged to this one.
  * @export
@@ -246,11 +248,13 @@ export interface SpecifAlternativeId {
      */
     project?: SpecifId;
 }
+
 /**
  * The list of consolidated items to be used in case a consolidated item shall be updated.
  * @export
  */
 export type SpecifAlternativeIds = Array<SpecifAlternativeId>
+
 /**
  * The creator of the SpecIF data-set (file). If specified, at least an e-mail address must be given.
  * @export
@@ -282,6 +286,7 @@ export interface SpecifCreatedBy {
      */
     email: string;
 }
+
 /**
  * 
  * @export
@@ -387,12 +392,13 @@ export enum SpecifDataTypeEnum {
     Duration = <any> 'xs:duration',
     String = <any> 'xs:string'
 }
-}
+
 /**
  * An ISO-8601 dateTime string. For reduced accuracy, any number of values may be dropped, but only from right to left.
  * @export
  */
 export type SpecifDateTime = Date
+
 /**
  * 
  * @export
@@ -412,11 +418,13 @@ export interface SpecifEnumeratedValue {
      */
     value: SpecifValue;
 }
+
 /**
  * Enumerated values for the given dataType. If 'multiple' is true 0..n options may be selected, otherwise exactly one must be selected.
  * @export
  */
 export type SpecifEnumeratedValues = Array<SpecifEnumeratedValue>
+
 /**
  * 
  * @export
@@ -478,35 +486,40 @@ export interface SpecifFile {
      */
     changedBy?: string;
 }
+
 /**
  * The number of hierarchy levels.
  * @export
- */
-export type SpecifHierarchyDepth = number
+ *
+export type SpecifHierarchyDepth = number */
+
 /**
  * A symbol for display as a prefix to titles; applicable to all instances of the class. Is usually a XML-encoded UTF-8 symbol, can be an URL or dataURL.
  * @export
  */
 export type SpecifIcon = string
+
 /**
  * A globally unique identifier.
  * @export
  */
 export type SpecifId = string
+
 /**
  * 
  * @export
  */
-export enum SpecifInstantiationEnum {
-    Plain = <any> 'auto',
-    Xhtml = <any> 'user'
+export enum SpecifInstantiation {
+    Auto = <any> 'auto',
+    User = <any> 'user'
 }
-export type SpecifInstantiation = Array<SpecifInstantiationEnum>
+
 /**
  * A key for a particular revision of an identifiable item, e.g. of a resource. A key consists of a globally unique identifier and a revision. No or an undefined revision means the latest revision of the identified item.
  * @export
  * @interface SpecifKey
  */
+
 export interface SpecifKey {
     /**
      * 
@@ -521,16 +534,19 @@ export interface SpecifKey {
      */
     revision?: SpecifRevision;
 }
+
 /**
  * A list of keys referencing items such as propertyClasses, resourceClasses or statementClasses; any list must have >0 entries including those of any parent element.
  * @export
  */
 export type SpecifKeys = Array<SpecifKey>
+
 /**
  * 
  * @export
  */
 export type SpecifMetaSchema = string
+
 /**
  * 
  * @export
@@ -556,6 +572,7 @@ export interface SpecifMultiLanguageText {
      */
     language?: string;
 }
+
 /**
  * 
  * @export
@@ -617,11 +634,13 @@ export interface SpecifNode {
      */
     changedBy?: string;
 }
+
 /**
  * A list of pointers to resources; may be nested forming a tree, i.e. a hierarchy of pointers.
  * @export
  */
 export type SpecifNodes = Array<DefinitionsSpecifNode>
+
 /**
  * 
  * @export
@@ -635,6 +654,7 @@ export interface SpecifOrg {
      */
     organizationName: string;
 }
+
 /**
  * 
  * @export
@@ -654,6 +674,7 @@ export interface SpecifProperty {
      */
     values: SpecifValues;
 }
+
 /**
  * 
  * @export
@@ -733,11 +754,13 @@ export interface SpecifPropertyClass {
      */
     changedBy?: string;
 }
+
 /**
  * For change and configuration management; the first revision has 0 entries, a simple modification has 1 entry and the result of a merge has 2 entries.
  * @export
  */
 export type SpecifReplaces = Array<SpecifRevision>
+
 /**
  * 
  * @export
@@ -799,6 +822,7 @@ export interface SpecifResource {
      */
     changedBy?: string;
 }
+
 /**
  * 
  * @export
@@ -843,10 +867,10 @@ export interface SpecifResourceClass {
     isHeading?: boolean;
     /**
      * 
-     * @type {SpecifInstantiation}
+     * @type {Array<SpecifInstantiation>}
      * @memberof SpecifResourceClass
      */
-    instantiation?: SpecifInstantiation;
+    instantiation?: Array<SpecifInstantiation>;
     /**
      * 
      * @type {SpecifKeys}
@@ -878,11 +902,13 @@ export interface SpecifResourceClass {
      */
     changedBy?: string;
 }
+
 /**
  * A globally unique revision tag with one or multiple blocks with alphanumeric characters separated by a special character [.:,;/-]. Sequential as well as branching/merging notations are possible.
  * @export
  */
 export type SpecifRevision = string
+
 /**
  * 
  * @export
@@ -902,6 +928,7 @@ export interface SpecifRights {
      */
     url: string;
 }
+
 /**
  * 
  * @export
@@ -975,6 +1002,7 @@ export interface SpecifStatement {
      */
     changedBy?: string;
 }
+
 /**
  * 
  * @export
@@ -1013,10 +1041,10 @@ export interface SpecifStatementClass {
     icon?: SpecifIcon;
     /**
      * 
-     * @type {SpecifInstantiation}
+     * @type {Array<SpecifInstantiation>}
      * @memberof SpecifStatementClass
      */
-    instantiation?: SpecifInstantiation;
+    instantiation?: Array<SpecifInstantiation>;
     /**
      * 
      * @type {boolean}
@@ -1066,11 +1094,13 @@ export interface SpecifStatementClass {
      */
     changedBy?: string;
 }
+
 /**
  * 
  * @export
  */
 export type SpecifText = string
+
 /**
  * 
  * @export
@@ -1080,13 +1110,13 @@ export enum SpecifTextFormat {
     Plain = <any> 'plain',
     Xhtml = <any> 'xhtml'
 }
+
 /**
- * First option for properties with dataType 'xs:string', second option for all others.
+ * First option for properties with dataType 'xs:string', second option for all others. Note that SpecIF represents *all* values including number and boolean as string.
  * @export
- * @interface SpecifValue
  */
-export interface SpecifValue {
-}
+export type SpecifValue = SpecifMultiLanguageText | string
+
 /**
  * If 'multiple' of the propertyClass is undefined or false, the array must contain one item. If the value is unknown, omit the whole property. By default, the class' value applies.
  * @export
