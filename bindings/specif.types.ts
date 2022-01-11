@@ -112,7 +112,7 @@ export interface SpecIF {
      * @type {SpecifMetaSchema}
      * @memberof SpecIF
      */
-    schema: SpecifMetaSchema;
+    $schema: SpecifMetaSchema;
     /**
      * 
      * @type {SpecifId}
@@ -552,7 +552,7 @@ export type SpecifMetaSchema = string
  * @export
  * @interface SpecifMultiLanguageText
  */
-export interface SpecifMultiLanguageText {
+export interface SpecifMultiLanguageTextItem {
     /**
      * 
      * @type {SpecifText}
@@ -572,6 +572,12 @@ export interface SpecifMultiLanguageText {
      */
     language?: string;
 }
+
+/**
+ * 
+ * @export
+ */
+export type SpecifMultiLanguageText = Array<SpecifMultiLanguageTextItem>
 
 /**
  * 
@@ -639,7 +645,7 @@ export interface SpecifNode {
  * A list of pointers to resources; may be nested forming a tree, i.e. a hierarchy of pointers.
  * @export
  */
-export type SpecifNodes = Array<DefinitionsSpecifNode>
+export type SpecifNodes = Array<SpecifNode>
 
 /**
  * 

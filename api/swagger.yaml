@@ -1509,17 +1509,19 @@ components:
         - plain
         - xhtml
     SpecifMultiLanguageText:
-      type: object
-      properties:
-        text:
-          $ref: '#/components/schemas/SpecifText'
-        format:
-          $ref: '#/components/schemas/SpecifTextFormat'
-        language:
-          type: string
-      additionalProperties: false
-      required:
-        - text
+      type: array
+      items:
+        type: object
+        properties:
+          text:
+            $ref: '#/components/schemas/SpecifText'
+          format:
+            $ref: '#/components/schemas/SpecifTextFormat'
+          language:
+            type: string
+        additionalProperties: false
+        required:
+          - text
     SpecifValue:
       description: "First option for properties with dataType 'xs:string', second option for all others. Note that SpecIF represents *all* values including number and boolean as string."
       oneOf:
@@ -1832,7 +1834,7 @@ components:
       type: array
       uniqueItems: true
       items:
-        $ref: "#/definitions/SpecifNode"
+        $ref: "#/components/schemas/SpecifNode"
     SpecifHierarchyDepth:
       description: The number of hierarchy levels.
       type: integer
@@ -1917,13 +1919,9 @@ components:
         revision:
           $ref: '#/components/schemas/SpecifRevision'
         title:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpecifMultiLanguageText'
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         description:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpecifMultiLanguageText'
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         isExtension:
           type: boolean
         generator:
@@ -1954,13 +1952,9 @@ components:
         revision:
           $ref: '#/components/schemas/SpecifRevision'
         title:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpecifMultiLanguageText'
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         description:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpecifMultiLanguageText'
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         isExtension:
           type: boolean
         generator:
