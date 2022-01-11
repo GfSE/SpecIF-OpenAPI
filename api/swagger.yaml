@@ -341,9 +341,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SpecifNodes'
+                $ref: '#/components/schemas/SpecifNodes'
     post:
       tags:
         - Hierarchy
@@ -1508,20 +1506,22 @@ components:
       enum: 
         - plain
         - xhtml
+    SpecifLanguageText:
+      type: object
+      properties:
+        text:
+          $ref: '#/components/schemas/SpecifText'
+        format:
+          $ref: '#/components/schemas/SpecifTextFormat'
+        language:
+          type: string
+      additionalProperties: false
+      required:
+        - text
     SpecifMultiLanguageText:
       type: array
       items:
-        type: object
-        properties:
-          text:
-            $ref: '#/components/schemas/SpecifText'
-          format:
-            $ref: '#/components/schemas/SpecifTextFormat'
-          language:
-            type: string
-        additionalProperties: false
-        required:
-          - text
+        $ref: '#/components/schemas/SpecifLanguageText'
     SpecifValue:
       description: "First option for properties with dataType 'xs:string', second option for all others. Note that SpecIF represents *all* values including number and boolean as string."
       oneOf:

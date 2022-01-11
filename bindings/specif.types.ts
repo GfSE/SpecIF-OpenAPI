@@ -47,16 +47,16 @@ export interface SpecifProject {
     revision?: SpecifRevision;
     /**
      * 
-     * @type {Array<SpecifMultiLanguageText>}
+     * @type {SpecifMultiLanguageText}
      * @memberof SpecifProject
      */
-    title?: Array<SpecifMultiLanguageText>;
+    title?: SpecifMultiLanguageText;
     /**
      * 
-     * @type {Array<SpecifMultiLanguageText>}
+     * @type {SpecifMultiLanguageText}
      * @memberof SpecifProject
      */
-    description?: Array<SpecifMultiLanguageText>;
+    description?: SpecifMultiLanguageText;
     /**
      * 
      * @type {boolean}
@@ -127,16 +127,16 @@ export interface SpecIF {
     revision?: SpecifRevision;
     /**
      * 
-     * @type {Array<SpecifMultiLanguageText>}
+     * @type {SpecifMultiLanguageText}
      * @memberof SpecIF
      */
-    title?: Array<SpecifMultiLanguageText>;
+    title?: SpecifMultiLanguageText;
     /**
      * 
-     * @type {Array<SpecifMultiLanguageText>}
+     * @type {SpecifMultiLanguageText}
      * @memberof SpecIF
      */
-    description?: Array<SpecifMultiLanguageText>;
+    description?: SpecifMultiLanguageText;
     /**
      * 
      * @type {boolean}
@@ -550,9 +550,9 @@ export type SpecifMetaSchema = string
 /**
  * 
  * @export
- * @interface SpecifMultiLanguageText
+ * @interface SpecifLanguageText
  */
-export interface SpecifMultiLanguageTextItem {
+export interface SpecifLanguageText {
     /**
      * 
      * @type {SpecifText}
@@ -577,7 +577,7 @@ export interface SpecifMultiLanguageTextItem {
  * 
  * @export
  */
-export type SpecifMultiLanguageText = Array<SpecifMultiLanguageTextItem>
+export type SpecifMultiLanguageText = Array<SpecifLanguageText>
 
 /**
  * 
