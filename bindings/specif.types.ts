@@ -397,7 +397,7 @@ export enum SpecifDataTypeEnum {
  * An ISO-8601 dateTime string. For reduced accuracy, any number of values may be dropped, but only from right to left.
  * @export
  */
-export type SpecifDateTime = Date
+export type SpecifDateTime = string
 
 /**
  * 
@@ -439,7 +439,7 @@ export interface SpecifFile {
     id: SpecifId;
     /**
      * 
-     * @type {SpecifText}
+     * @type {string}
      * @memberof SpecifFile
      */
     title: string;
