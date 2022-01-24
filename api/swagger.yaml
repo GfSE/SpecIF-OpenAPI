@@ -1845,7 +1845,7 @@ components:
         id:
           $ref: '#/components/schemas/SpecifId'
         title:
-          $ref: '#/components/schemas/SpecifText'
+          type: string
         description:
           $ref: '#/components/schemas/SpecifMultiLanguageText'
         url:

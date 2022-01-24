@@ -442,7 +442,7 @@ export interface SpecifFile {
      * @type {SpecifText}
      * @memberof SpecifFile
      */
-    title: SpecifText;
+    title: string;
     /**
      * 
      * @type {SpecifMultiLanguageText}
@@ -672,7 +672,7 @@ export interface SpecifProperty {
      * @type {SpecifKey}
      * @memberof SpecifProperty
      */
-    _class: SpecifKey;
+    class: SpecifKey;
     /**
      * 
      * @type {SpecifValues}
@@ -790,7 +790,7 @@ export interface SpecifResource {
      * @type {SpecifKey}
      * @memberof SpecifResource
      */
-    _class: SpecifKey;
+    class: SpecifKey;
     /**
      * 
      * @type {string}
@@ -958,7 +958,7 @@ export interface SpecifStatement {
      * @type {SpecifKey}
      * @memberof SpecifStatement
      */
-    _class: SpecifKey;
+    class: SpecifKey;
     /**
      * 
      * @type {string}
