@@ -14,34 +14,34 @@ paths:
     get:
       tags:
         - DataType
-      summary: Returns all data types with all available revisions.
+      summary: Get all data types.
       responses:
         '200':
-          description: List of data types successfully returned.
+          description: List of data types returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DataType'
+                  $ref: '#/components/schemas/SpecifDataType'
     post:
       tags:
         - DataType
-      summary: Creates a data type.
+      summary: Create the data type; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
       requestBody:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
           application/json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
           text/json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
       responses:
         '201':
           description: dataType created
@@ -65,16 +65,16 @@ paths:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
           application/json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
           text/json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/DataType'
+              $ref: '#/components/schemas/SpecifDataType'
       responses:
         '200':
           description: dataType updated
@@ -90,63 +90,44 @@ paths:
     get:
       tags:
         - DataType
-      summary: Returns a data type with the given ID.
+      summary: Get the data type.
       parameters:
         - name: id
           in: path
           description: The data type ID.
           required: true
           schema:
-            type: string
-            description: The data type ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: The data type revision ID.
+          description: The data type revision; if missing the newest is returned.
           schema:
-            type: string
-            description: The data type revision ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
-        '400':
-          description: Bad Request
+        '200':
+          description: data type returned
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: '#/components/schemas/SpecifDataType'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
     delete:
       tags:
         - DataType
-      summary: "Deletes the data type; the supplied ID must exist. \r\nReturns an error if there are dependant model elements."
+      summary: Delete the data type; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
-        - name: revision
+            $ref: '#/components/schemas/SpecifId'
+        - name: forced
           in: query
-          description: ''
+          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
           schema:
-            type: string
-            description: ''
-            nullable: true
-        - name: mode
-          in: query
-          description: Delete mode. ?mode=forced results in deleting all directly and indirectly dependant model elements.
-          schema:
-            type: string
-            description: Delete mode. ?mode=forced results in deleting all directly and indirectly dependant model elements.
-            nullable: true
+            type: boolean
       responses:
         '200':
           description: data type deleted.
@@ -162,25 +143,25 @@ paths:
     get:
       tags:
         - DataType
-      summary: Returns all data type revisions for the given ID.
+      summary: Get all revisions of the data type.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the data type returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DataType'
+                  $ref: '#/components/schemas/SpecifDataType'
+        '404':
+          description: Not Found
   /specif/v1.1/files:
     get:
       tags:
@@ -191,9 +172,7 @@ paths:
           in: query
           description: Filter file descriptors by project with the given Id.
           schema:
-            type: string
-            description: An optional project ID as filter.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
           description: List of file descriptors returned.
@@ -202,7 +181,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/File'
+                  $ref: '#/components/schemas/SpecifFile'
     post:
       tags:
         - File
@@ -276,19 +255,21 @@ paths:
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: ''
+          description: The file descriptor revision; if missing the newest is returned.
           schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
         '200':
-          description: Success
+          description: file descriptor returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecifFile'
+        '404':
+          description: Not Found
     delete:
       tags:
         - File
@@ -320,30 +301,30 @@ paths:
     get:
       tags:
         - File
-      summary: Returns all available file revisions as SpecIF file descriptions.
+      summary: Get all revisions of the file descriptor.
       parameters:
         - name: id
           in: path
-          description: The file ID.
+          description: ''
           required: true
           schema:
-            type: string
-            description: The file ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the file descriptor returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/File'
+                  $ref: '#/components/schemas/SpecifFile'
+        '404':
+          description: Not Found
   /specif/v1.1/hierarchies:
     get:
       tags:
         - Hierarchy
-      summary: Gets all hierarchies.
+      summary: Get all hierarchies.
       parameters:
         - name: project
           in: query
@@ -356,7 +337,7 @@ paths:
             type: boolean
       responses:
         '200':
-          description: Success
+          description: List of hierarchies returned.
           content:
             application/json:
               schema:
@@ -364,7 +345,7 @@ paths:
     post:
       tags:
         - Hierarchy
-      summary: "Creates a hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique. \r\nIf no ID is supplied, it is created before insertion. \r\nQuery ?parent=nodeId - the sub-tree will be inserted as first child; \r\nquery ?predecessor=nodeId - the sub-tree will be inserted after the specified node; \r\nno query - the sub-tree will be inserted as first element at root level. \r\nWithout query string, the node (sub-tree) is inserted as first element at root level."
+      summary: Create the hierarchy (sub-tree) with supplied nodes; the supplied ID must be unique. If no ID is supplied, it is created before insertion. Query ?parent=nodeId - the sub-tree will be inserted as first child. Query ?predecessor=nodeId - the sub-tree will be inserted after the specified node. Without query, the node (sub-tree) is inserted as first element at root level.
       parameters:
         - name: parent
           in: query
@@ -380,25 +361,25 @@ paths:
             description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
         - name: projectId
           in: query
-          description: "The project ID. If the ID is given, the new hierarchy will be added to the specific project. \r\n            Only useful for new hierarchies - no parent or predecessor given."
+          description: The project ID. If the ID is given, the new hierarchy will be added to the specific project. Only useful for new hierarchies - no parent or predecessor given.
           schema:
             type: string
             description: The project ID. If the ID is given, the new hierarchy will be added to the specific project. Only useful for new hierarchies - no parent or predecessor given.
       requestBody:
-        description: The hierarchy data to add.
+        description: The hierarchy to create.
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
           application/json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
           text/json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
       responses:
         '201':
           description: hierarchy created
@@ -417,7 +398,7 @@ paths:
     put:
       tags:
         - Hierarchy
-      summary: "Updates an existing hierarchy node.\r\nThe supplied ID must exist somewhere in any hierarchy. \r\nQuery ?parent=nodeId - the sub-tree will be moved and inserted as first child; \r\nquery ?predecessor=nodeId - the sub-tree will be moved and inserted after the specified node. \r\nWithout query string, the node (sub-tree) is not moved."
+      summary: Updates the hierarchy node. The supplied ID must exist somewhere in any hierarchy. Query ?parent=nodeId - the sub-tree will be moved and inserted as first child. Query ?predecessor=nodeId - the sub-tree will be moved and inserted after the specified node. Without query string, the node (sub-tree) is not moved.
       parameters:
         - name: parent
           in: query
@@ -432,20 +413,20 @@ paths:
             type: string
             description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
       requestBody:
-        description: ''
+        description: The hierarchy node to update; the supplied ID must exist.
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
           application/json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
           text/json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Node'
+              $ref: '#/components/schemas/SpecifNode'
       responses:
         '200':
           description: hierarchy node updated
@@ -461,81 +442,66 @@ paths:
     get:
       tags:
         - Hierarchy
-      summary: Gets a hierarchy with a specific ID.
+      summary: Get the hierarchy node.
       parameters:
         - name: id
           in: path
           description: The hierarchy ID.
           required: true
           schema:
-            type: string
-            description: The hierarchy ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
           description: The hierarchy revision.
           schema:
-            type: string
-            description: The hierarchy revision.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
         - name: depth
           in: query
-          description: The maximum depth of child nodes to return. If not set the complete hierarchy depth is returned.
+          description: The maximum depth of child nodes to return. If missing the complete hierarchy depth is returned.
           schema:
-            type: integer
-            description: The maximum depth of child nodes to return. If not set the complete hierarchy depth is returned.
-            format: int32
+            $ref: '#/components/schemas/SpecifHierarchyDepth'
       responses:
         '200':
-          description: Success
+          description: hierarchy node returned
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Node'
+                $ref: '#/components/schemas/SpecifNode'
+        '404':
+          description: Not Found
     delete:
       tags:
         - Hierarchy
-      summary: Deletes a hierarchy.
+      summary: Delete the hierarchy node with the sub-tree.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
-        - name: revision
-          in: query
-          description: ''
-          schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: hierarchy node with sub-tree deleted.
+        '404':
+          description: Not Found
   /specif/v1.1/hierarchies/{id}/revisions:
     get:
       tags:
         - Hierarchy
-      summary: Gets all revisions from a hierarchy with a specific ID.
+      summary: Get all revisions of the hierarchy node including sub-tree.
       parameters:
         - name: id
           in: path
           description: The hierarchy ID.
           required: true
           schema:
-            type: string
-            description: The hierarchy ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: depth
           in: query
           description: The maximum depth of child nodes to return. If not set the complete hierarchy depth is returned.
           schema:
-            type: integer
-            description: The maximum depth of child nodes to return. If not set the complete hierarchy depth is returned.
-            format: int32
+            $ref: '#/components/schemas/SpecifHierarchyDepth'
       responses:
         '200':
           description: Success
@@ -544,7 +510,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Node'
+                  $ref: '#/components/schemas/SpecifNode'
+        '404':
+          description: Not Found
   /specif/v1.1/projects:
     get:
       tags:
@@ -552,7 +520,7 @@ paths:
       summary: Get all projects; to limit the size only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties are delivered.
       responses:
         '200':
-          description: Success
+          description: List of projects returned
           content:
             application/json:
               schema:
@@ -625,91 +593,82 @@ paths:
     get:
       tags:
         - Project
-      summary: Returns the project with the given ID.
+      summary: Get the project.
       parameters:
         - name: id
           in: path
           description: The project ID.
           required: true
           schema:
-            type: string
-            description: The project ID.
-            nullable: true
-        - name: hierarchyFilter
+            $ref: '#/components/schemas/SpecifId'
+        - name: hierarchies
           in: query
           description: An optional comma seperated list of hierarchy root node IDs to limit the output of selected hierarchies.
           schema:
-            type: string
-            description: An optional comma seperated list of hierarchy root node IDs to limit the output of selected hierarchies.
-            nullable: true
-        - name: includeMetedata
+            $ref: '#/components/schemas/SpecifKeys'
+        - name: includeMetadata
           in: query
           description: Set to true if the metadata should be included (e.g. resource classes etc.)
           schema:
             type: boolean
-            description: Set to true if the metadata should be included (e.g. resource classes etc.)
             default: true
       responses:
-        '201':
-          description: Success
+        '200':
+          description: project returned.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpecIF'
+        '404':
+          description: Not Found
     delete:
       tags:
         - Project
-      summary: Deletes a project with the given ID.
+      summary: Delete the project.
       parameters:
         - name: id
           in: path
           description: The ID of the project to delete.
           required: true
           schema:
-            type: string
-            description: The ID of the project to delete.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: project deleted.
+        '404':
+          description: Not Found
   /specif/v1.1/propertyClasses:
     get:
       tags:
         - PropertyClass
-      summary: Returns all property classes with all available revisions.
+      summary: Get all property classes.
       responses:
         '200':
-          description: Success
+          description: List of propertyClasses returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PropertyClass'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                  $ref: '#/components/schemas/SpecifPropertyClass'
     post:
       tags:
         - PropertyClass
-      summary: Creates a new property class.
+      summary: Create the property class; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
       requestBody:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/PropertyClass'
+              $ref: '#/components/schemas/SpecifPropertyClass'
           application/json:
             schema:
-              $ref: '#/components/schemas/PropertyClass'
+              $ref: '#/components/schemas/SpecifPropertyClass'
           text/json:
             schema:
-              $ref: '#/components/schemas/PropertyClass'
+              $ref: '#/components/schemas/SpecifPropertyClass'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/PropertyClass'
+              $ref: '#/components/schemas/SpecifPropertyClass'
       responses:
         '201':
           description: property class created
@@ -758,69 +717,44 @@ paths:
     get:
       tags:
         - PropertyClass
-      summary: Returns the property class with the given ID.
+      summary: Get the property class.
       parameters:
         - name: id
           in: path
           description: The property class ID.
           required: true
           schema:
-            type: string
-            description: The property class ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: The property class revsion.
+          description: The property class revsion; if missing the newest is returned.
           schema:
-            type: string
-            description: The property class revsion.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
         '200':
-          description: Success
+          description: property class returned
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PropertyClass'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: '#/components/schemas/SpecifPropertyClass'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
     delete:
       tags:
         - PropertyClass
-      summary: "Deletes the property class; the supplied ID must exist. \r\nReturns an error if there are dependant model elements."
+      summary: Delete the property class; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
           description: The property class ID.
           required: true
           schema:
-            type: string
-            description: The property class ID.
-            nullable: true
-        - name: revision
+            $ref: '#/components/schemas/SpecifId'
+        - name: forced
           in: query
-          description: The property class revision.
+          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
           schema:
-            type: string
-            description: The property class revision.
-            nullable: true
-        - name: mode
-          in: query
-          description: Delete mode. ?mode=forced results in deleting all directly and indirectly dependant model elements.
-          schema:
-            type: string
-            description: Delete mode. ?mode=forced results in deleting all directly and indirectly dependant model elements.
-            nullable: true
+            type: boolean
       responses:
         '200':
           description: property class deleted.
@@ -836,30 +770,30 @@ paths:
     get:
       tags:
         - PropertyClass
-      summary: Returns all property class revisions for the given ID.
+      summary: Get all revisions of the property class.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the property class returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PropertyClass'
+                  $ref: '#/components/schemas/SpecifPropertyClass'
+        '404':
+          description: Not Found
   /specif/v1.1/resources:
     get:
       tags:
         - Resource
-      summary: Returns all resources with all available revisions.
+      summary: Get all resources.
       parameters:
         - name: project
           in: query
@@ -873,39 +807,31 @@ paths:
             $ref: '#/components/schemas/SpecifKey'
       responses:
         '200':
-          description: Success
+          description: List of resources returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource'
+                  $ref: '#/components/schemas/SpecifResource'
     post:
       tags:
         - Resource
-      summary: Adds a new resource to the SpecIF repository.
-      parameters:
-        - name: projectID
-          in: query
-          description: The optional project ID. If a project ID is not given, the data is added to a default project.
-          schema:
-            type: string
-            description: The optional project ID. If a project ID is not given, the data is added to a default project.
-            nullable: true
+      summary: Create the resource; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
       requestBody:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
           text/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
       responses:
         '201':
           description: resource created
@@ -929,19 +855,21 @@ paths:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
           text/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResource'
       responses:
-        '201':
-          description: Success
+        '200':
+          description: resource updated
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -952,57 +880,44 @@ paths:
     get:
       tags:
         - Resource
-      summary: Returns the latest version of the resource with the given ID.
+      summary: Get the resource.
       parameters:
         - name: id
           in: path
           description: The resource ID.
           required: true
           schema:
-            type: string
-            description: The resource ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: The resource revision.
+          description: The resource revision; if missing the newest is returned.
           schema:
-            type: string
-            description: The resource revision.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
         '200':
-          description: Success
+          description: resource returned
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource'
+                $ref: '#/components/schemas/SpecifResource'
+        '404':
+          description: Not Found
     delete:
       tags:
         - Resource
-      summary: Deletes the resource.
+      summary: Delete the resource; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
           description: The resource ID.
           required: true
           schema:
-            type: string
-            description: The resource ID.
-            nullable: true
-        - name: revision
+            $ref: '#/components/schemas/SpecifId'
+        - name: forced
           in: query
-          description: The resource revision.
+          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
           schema:
-            type: string
-            description: The resource revision.
-            nullable: true
-        - name: mode
-          in: query
-          description: '?mode=forced results in deleting all directly and indirectly dependant model elements.'
-          schema:
-            type: string
-            description: '?mode=forced results in deleting all directly and indirectly dependant model elements.'
-            nullable: true
+            type: boolean
       responses:
         '200':
           description: resource deleted.
@@ -1018,19 +933,17 @@ paths:
     get:
       tags:
         - Resource
-      summary: Returns a list of all revisions for the resource with the given ID.
+      summary: Get all revisions of the resource.
       parameters:
         - name: id
           in: path
           description: The resource ID.
           required: true
           schema:
-            type: string
-            description: The resource ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the resource returned.
           content:
             application/json:
               schema:
@@ -1069,43 +982,31 @@ paths:
       summary: Get all resource classes.
       responses:
         '200':
-          description: Success
+          description: List of resource classes returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResourceClass'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                  $ref: '#/components/schemas/SpecifResourceClass'
     post:
       tags:
         - ResourceClass
-      summary: Creates a new resource class.
+      summary: Create the resource class; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
       requestBody:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/ResourceClass'
+              $ref: '#/components/schemas/SpecifResourceClass'
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourceClass'
+              $ref: '#/components/schemas/SpecifResourceClass'
           text/json:
             schema:
-              $ref: '#/components/schemas/ResourceClass'
+              $ref: '#/components/schemas/SpecifResourceClass'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/ResourceClass'
+              $ref: '#/components/schemas/SpecifResourceClass'
       responses:
         '201':
           description: resource class created
@@ -1129,19 +1030,21 @@ paths:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResourceClass'
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResourceClass'
           text/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResourceClass'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifResourceClass'
       responses:
         '200':
-          description: Success
+          description: resource class updated
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -1152,62 +1055,44 @@ paths:
     get:
       tags:
         - ResourceClass
-      summary: Returns the resource class with the given ID.
+      summary: Get the resource class.
       parameters:
         - name: id
           in: path
           description: The resource class ID.
           required: true
           schema:
-            type: string
-            description: The resource class ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: The resource class revision.
+          description: The resource class revision; if missing the newest is returned.
           schema:
-            type: string
-            description: The resource class revision.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
         '200':
-          description: Success
+          description: resource class returned.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceClass'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: '#/components/schemas/SpecifResourceClass'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
     delete:
       tags:
         - ResourceClass
-      summary: Deletes a resource class with the given ID.
+      summary: Delete the resource class; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
-          description: The resource class ID.
+          description: ''
           required: true
           schema:
-            type: string
-            description: The resource class ID.
-            nullable: true
-        - name: revision
+            $ref: '#/components/schemas/SpecifId'
+        - name: forced
           in: query
-          description: The revision ID.
+          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
           schema:
-            type: string
-            description: The revision ID.
-            nullable: true
+            type: boolean
       responses:
         '200':
           description: resource class deleted.
@@ -1223,42 +1108,30 @@ paths:
     get:
       tags:
         - ResourceClass
-      summary: Returns all resource class revisions for the given ID.
+      summary: Get all revisions of the resource class.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the resource class returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResourceClass'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                  $ref: '#/components/schemas/SpecifResourceClass'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/statements:
     get:
       tags:
         - Statement
-      summary: "Returns all statements with all available revisions.\r\nWith the optional project ID only the statements for the project are returned."
+      summary: Get all statements.
       parameters:
         - name: project
           in: query
@@ -1287,34 +1160,36 @@ paths:
             $ref: '#/components/schemas/SpecifKey'
       responses:
         '200':
-          description: Success
+          description: List of statements returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Statement'
+                  $ref: '#/components/schemas/SpecifStatement'
     post:
       tags:
         - Statement
-      summary: Creates a statement; the supplied ID must be unique in the project scope.
+      summary: Create the statement; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
       requestBody:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
           application/json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
           text/json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
       responses:
         '201':
-          description: Success
+          description: statement created
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -1333,23 +1208,19 @@ paths:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
           application/json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
           text/json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Statement'
+              $ref: '#/components/schemas/SpecifStatement'
       responses:
         '201':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Statement'
+          description: statement updated
         '400':
           description: Bad Request
           content:
@@ -1362,139 +1233,99 @@ paths:
     get:
       tags:
         - Statement
-      summary: Returns the statement with the given ID.
+      summary: Get the statement.
       parameters:
         - name: id
           in: path
           description: The statement ID.
           required: true
           schema:
-            type: string
-            description: The statement ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: The statement revision.
+          description: The statement revision; if missing the newest is returned.
           schema:
-            type: string
-            description: The statement revision.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
         '200':
-          description: Success
+          description: statement returned
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Statement'
+                $ref: '#/components/schemas/SpecifStatement'
+        '404':
+          description: Not Found
     delete:
       tags:
         - Statement
-      summary: Deletes the statement; the supplied ID must exist. Returns an error if there are dependant model elements.
+      summary: Delete the statement.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
-        - name: revision
-          in: query
-          description: ''
-          schema:
-            type: string
-            description: ''
-            nullable: true
-        - name: mode
-          in: query
-          description: '?mode=forced results in deleting all directly and indirectly dependant model elements.'
-          schema:
-            type: string
-            description: '?mode=forced results in deleting all directly and indirectly dependant model elements.'
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: statement deleted.
+        '404':
+          description: Not Found
   /specif/v1.1/statements/{id}/revisions:
     get:
       tags:
         - Statement
-      summary: Returns all available revisions for the statement with the given ID.
+      summary: Get all revisions of the statement.
       parameters:
         - name: id
           in: path
           description: The statement ID.
           required: true
           schema:
-            type: string
-            description: The statement ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the statement returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                  $ref: '#/components/schemas/SpecifStatement'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
   /specif/v1.1/statementClasses:
     get:
       tags:
         - StatementClass
-      summary: Returns all statement classes with all available revisions.
+      summary: Get all statement classes.
       responses:
         '200':
-          description: Success
+          description: List of statement classes returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                  $ref: '#/components/schemas/SpecifStatementClass'
     post:
       tags:
         - StatementClass
-      summary: Creates a new statement class.
+      summary: Create the statement class; the supplied ID must be unique. If no ID is supplied, it is created before insertion. 
       requestBody:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
           text/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
       responses:
         '201':
           description: statement class created
@@ -1518,19 +1349,21 @@ paths:
         content:
           application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
           text/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/SpecifStatementClass'
       responses:
         '200':
-          description: Success
+          description: statement class updated
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
@@ -1541,62 +1374,44 @@ paths:
     get:
       tags:
         - StatementClass
-      summary: Returns the statement class with the given ID and revision.
+      summary: Get the statement class.
       parameters:
         - name: id
           in: path
           description: The statement class ID.
           required: true
           schema:
-            type: string
-            description: The statement class ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: revision
           in: query
-          description: The statement class revision identifier.
+          description: The statement class revision; if missing the newest is returned.
           schema:
-            type: string
-            description: The statement class revision identifier.
-            nullable: true
+            $ref: '#/components/schemas/SpecifRevision'
       responses:
         '200':
-          description: Success
+          description: statement class returned
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatementClass'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
     delete:
       tags:
         - StatementClass
-      summary: Deletes a statement class with the given ID.
+      summary: Delete the statement class; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
-          description: The statement class ID.
+          description: ''
           required: true
           schema:
-            type: string
-            description: The statement class ID.
-            nullable: true
-        - name: revision
+            $ref: '#/components/schemas/SpecifId'
+        - name: forced
           in: query
-          description: The statement revision ID.
+          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
           schema:
-            type: string
-            description: The statement revision ID.
-            nullable: true
+            type: boolean
       responses:
         '200':
           description: statement class deleted.
@@ -1612,25 +1427,25 @@ paths:
     get:
       tags:
         - StatementClass
-      summary: Returns all statement class revisions for the given ID.
+      summary: Get all revisions of the statement class.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
       responses:
         '200':
-          description: Success
+          description: All revisions of the statement class returned.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/StatementClass'
+                  $ref: '#/components/schemas/SpecifStatementClass'
+        '404':
+          description: Not Found
 components:
   schemas:
     SpecifId:
@@ -1695,14 +1510,11 @@ components:
       type: object
       properties:
         text:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifText'
         format:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifTextFormat'
         language:
           type: string
-          nullable: true
       additionalProperties: false
       required:
         - text
@@ -1726,332 +1538,292 @@ components:
       type: object
       properties:
         id:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifId'
         value:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
+          $ref: '#/components/schemas/SpecifValue'
       additionalProperties: false
-    DataType:
+      required:
+        - id
+        - value
+    SpecifEnumeratedValues:
+      type: array
+      description: "Enumerated values for the given dataType. If 'multiple' is true 0..n options may be selected, otherwise exactly one must be selected."
+      uniqueItems: true
+      items:
+        $ref: "#/components/SpecifEnumeratedValue"
+    SpecifDateTime:
+      description: "An ISO-8601 dateTime string. For reduced accuracy, any number of values may be dropped, but only from right to left."
+      type: string
+      format: date-time
+    SpecifIcon:
+      description: "A symbol for display as a prefix to titles; applicable to all instances of the class. Is usually a XML-encoded UTF-8 symbol, can be an URL or dataURL."
+      type: string
+    SpecifInstantiation:
+      description": "Indicates whether an instance of the class is created automatically, manually or both. All is allowed, if the property is omitted. The class is abstract and cannot be instantiated, if the property list is present, but empty."
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+        enum: 
+          - auto
+          - user
+    SpecifDataType:
       type: object
       properties:
         id:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifId'
         title:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifText'
         description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         revision:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifRevision'
         replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifReplaces'
         type:
           type: string
-          nullable: true
+          enum:
+            - xs:boolean
+            - xs:integer
+            - xs:double
+            - xs:anyUri
+            - xs:dateTime
+            - xs:duration
+            - xs:string
         maxLength:
           type: integer
           format: int32
-          nullable: true
+          minimum: 0
         fractionDigits:
           type: integer
           format: int32
-          nullable: true
+          minimum: 1
         minInclusive:
           type: integer
           format: int32
-          nullable: true
         maxInclusive:
           type: integer
           format: int32
-          nullable: true
         enumeration:
-          type: array
-          items:
-            $ref: '#/components/schemas/EnumerationValue'
-          nullable: true
+          $ref: '#/components/schemas/SpecifEnumeratedValues'
         multiple:
           type: boolean
-          nullable: true
         changedAt:
-          type: string
-          format: date-time
+          $ref: '#/components/schemas/SpecifDateTime'
         changedBy:
           type: string
-          nullable: true
       additionalProperties: false
-    ProblemDetails:
-      type: object
-      properties:
-        type:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        status:
-          type: integer
-          format: int32
-          nullable: true
-        detail:
-          type: string
-          nullable: true
-        instance:
-          type: string
-          nullable: true
-      additionalProperties: {}
-    File:
+      required:
+        - id
+        - title
+        - type
+        - changedAt
+    SpecifPropertyClass:
       type: object
       properties:
         id:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifId'
         title:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifText'
         description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        revision:
-          type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
-        type:
-          type: string
-          nullable: true
-        url:
-          type: string
-          nullable: true
-        changedAt:
-          type: string
-          format: date-time
-        changedBy:
-          type: string
-          nullable: true
-      additionalProperties: false
-    Node:
-      type: object
-      properties:
-        id:
-          type: string
-          nullable: true
-        title:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        revision:
-          type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
-        resource:
-          nullable: true
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Node'
-          nullable: true
-        changedAt:
-          type: string
-          format: date-time
-        changedBy:
-          type: string
-          nullable: true
-      additionalProperties: false
-    Rights:
-      type: object
-      properties:
-        title:
-          type: string
-          nullable: true
-        url:
-          type: string
-          nullable: true
-      additionalProperties: false
-    Org:
-      type: object
-      properties:
-        organizationName:
-          type: string
-          nullable: true
-      additionalProperties: false
-    Creator:
-      type: object
-      properties:
-        familyName:
-          type: string
-          nullable: true
-        givenName:
-          type: string
-          nullable: true
-        org:
-          $ref: '#/components/schemas/Org'
-        email:
-          type: string
-          nullable: true
-      additionalProperties: false
-    ProjectDescriptor:
-      type: object
-      properties:
-        $schema:
-          nullable: true
-        id:
-          type: string
-          nullable: true
-        title:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        isExtension:
-          type: boolean
-        generator:
-          type: string
-          nullable: true
-        generatorVersion:
-          type: string
-          nullable: true
-        rights:
-          $ref: '#/components/schemas/Rights'
-        createdAt:
-          type: string
-          format: date-time
-        createdBy:
-          $ref: '#/components/schemas/Creator'
-      additionalProperties: false
-    Key:
-      type: object
-      properties:
-        id:
-          type: string
-          nullable: true
-        revision:
-          type: string
-          nullable: true
-      additionalProperties: false
-    Value:
-      type: object
-      additionalProperties: false
-    PropertyClass:
-      type: object
-      properties:
-        id:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        revision:
-          type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         dataType:
-          $ref: '#/components/schemas/Key'
+          $ref: '#/components/schemas/SpecifKey'
         multiple:
           type: boolean
-          nullable: true
+        values:
+          $ref: '#/components/schemas/SpecifValues'
         format:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifTextFormat'
         unit:
           type: string
-          nullable: true
-        values:
-          type: array
-          items:
-            $ref: '#/components/schemas/Value'
-          nullable: true
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
         changedAt:
-          type: string
-          format: date-time
+          $ref: '#/components/schemas/SpecifDateTime'
         changedBy:
           type: string
-          nullable: true
       additionalProperties: false
-    ResourceClass:
+      required:
+        - id
+        - title
+        - dataType
+        - changedAt
+    SpecifResourceClass:
       type: object
       properties:
         id:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifId'
         title:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifText'
         description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        revision:
-          type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         extends:
-          $ref: '#/components/schemas/Key'
+          $ref: '#/components/schemas/SpecifKey'
         icon:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifIcon'
         isHeading:
           type: boolean
         instantiation:
-          type: array
-          items:
-            type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifInstantiation'
         propertyClasses:
-          type: array
-          items:
-            $ref: '#/components/schemas/Key'
-          nullable: true
+          description: "A list of keys referencing propertyClasses; a base resourceClass must have at least one propertyClass, whereas an extending class may have none."
+          $ref: '#/components/schemas/SpecifKeys'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
         changedAt:
-          type: string
-          format: date-time
+          $ref: '#/components/schemas/SpecifDateTime'
         changedBy:
           type: string
-          nullable: true
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - propertyClasses
+        - changedAt
+    SpecifStatementClass:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SpecifId'
+        title:
+          $ref: '#/components/schemas/SpecifText'
+        description:
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
+        extends:
+          $ref: '#/components/schemas/SpecifKey'
+        icon:
+          $ref: '#/components/schemas/SpecifIcon'
+        instantiation:
+          $ref: '#/components/schemas/SpecifInstantiation'
+        isUndirected:
+          type: boolean
+        propertyClasses:
+          description: "A list of keys referencing propertyClasses; a statementClass may exist without propertyClasses."
+          $ref: '#/components/schemas/SpecifKeys'
+        subjectClasses:
+          description: "A list of keys referencing eligible resource and statement classes for a statement's subject; if missing, all resource or statement classes are eligible."
+          $ref: '#/components/schemas/SpecifKeys'
+        objectClasses:
+          description: "A list of keys referencing eligible resource and statement classes for a statement's object; if missing, all resource or statement classes are eligible."
+          $ref: '#/components/schemas/SpecifKeys'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
+        changedAt:
+          $ref: '#/components/schemas/SpecifDateTime'
+        changedBy:
+          type: string
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - changedAt
+    SpecifProperty:
+      type: object
+      properties:
+        class:
+          description: "Must be a member of 'propertyClasses'. In addition, it must be listed in the propertyClasses of the respective resource's or statement's (or any of it's parent's) class."
+          $ref: '#/components/schemas/SpecifKey'
+        values:
+          $ref: '#/components/schemas/SpecifValues'
+      additionalProperties: false
+      required:
+        - class
+        - values
+    SpecifResource:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SpecifId'
+        alternativeIds:
+          $ref: "#/components/SpecifAlternativeIds"
+        class:
+          $ref: '#/components/schemas/SpecifKey'
+        language:
+          type: string
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecifProperty'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
+        changedAt:
+          $ref: '#/components/schemas/SpecifDateTime'
+        changedBy:
+          type: string
+      additionalProperties: false
+      required:
+        - id
+        - class
+        - properties
+        - changedAt
+    SpecifStatement:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SpecifId'
+        alternativeIds:
+          $ref: "#/components/SpecifAlternativeIds"
+        class:
+          $ref: '#/components/schemas/SpecifKey'
+        language:
+          type: string
+        properties:
+          description: "If there is no title property, the statementClass' title applies."
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecifProperty'
+        subject:
+          description: "Must be a member of resources or statements."
+          $ref: '#/components/schemas/SpecifKey'
+        object:
+          description: "Must be a member of resources or statements."
+          $ref: '#/components/schemas/SpecifKey'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
+        changedAt:
+          $ref: '#/components/schemas/SpecifDateTime'
+        changedBy:
+          type: string
+      additionalProperties: false
+      required:
+        - id
+        - class
+        - subject
+        - object
+        - changedAt
+    SpecifNode:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SpecifId'
+        title:
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
+        description:
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
+        resource:
+          description: "Must be a member of resources."
+          $ref: '#/components/schemas/SpecifKey'
+        nodes:
+          $ref: '#/components/schemas/SpecifNodes'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
+        changedAt:
+          $ref: '#/components/schemas/SpecifDateTime'
+        changedBy:
+          type: string
       additionalProperties: false
       required:
         - id
@@ -2079,99 +1851,57 @@ components:
         url:
           description: "An absolute or relative URL to the file; will be of format 'uri-reference' in future. If missing, the title applies."
           type: string
-          nullable: true
+          format: uri
+        type:
+          description: "The file's media type (formerly MIME-type) according to https://www.iana.org/assignments/media-types/media-types.xhtml."
+          type: string
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        replaces:
+          $ref: '#/components/schemas/SpecifReplaces'
+        changedAt:
+          $ref: '#/components/schemas/SpecifDateTime'
+        changedBy:
+          type: string
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - type
+        - changedAt
+    SpecifRights:
+      type: object
+      properties:
         title:
           type: string
-          nullable: true
-        description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
-        revision:
+        url:
           type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
-        subjectClasses:
-          type: array
-          items:
-            $ref: '#/components/schemas/Key'
-          nullable: true
-        objectClasses:
-          type: array
-          items:
-            $ref: '#/components/schemas/Key'
-          nullable: true
-        extends:
-          $ref: '#/components/schemas/Key'
-        icon:
-          type: string
-          nullable: true
-        isHeading:
-          type: boolean
-        instantiation:
-          type: array
-          items:
-            type: string
-          nullable: true
-        propertyClasses:
-          type: array
-          items:
-            $ref: '#/components/schemas/Key'
-          nullable: true
-        changedAt:
-          type: string
-          format: date-time
-        changedBy:
-          type: string
-          nullable: true
+          format: uri
       additionalProperties: false
-    Property:
+      required:
+        - title
+        - url
+    SpecifOrg:
       type: object
       properties:
-        class:
-          $ref: '#/components/schemas/Key'
-        values:
-          type: array
-          items:
-            $ref: '#/components/schemas/Value'
-          nullable: true
+        organizationName:
+          type: string
       additionalProperties: false
-    Resource:
+      required:
+        - organizationName
+    SpecifCreatedBy:
+      description: "The creator of the SpecIF data-set (file). If specified, at least an e-mail address must be given."
       type: object
       properties:
-        id:
+        familyName:
           type: string
-          nullable: true
-        class:
-          $ref: '#/components/schemas/Key'
-        properties:
-          type: array
-          items:
-            $ref: '#/components/schemas/Property'
-          nullable: true
-        revision:
+        givenName:
           type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
-        alternativeIds:
-          type: array
-          items: {}
-          nullable: true
-        changedAt:
+        org:
+          $ref: '#/components/schemas/SpecifOrg'
+        email:
           type: string
-          format: date-time
-        changedBy:
-          type: string
-          nullable: true
+          format: email
       additionalProperties: false
       required:
         - email
@@ -2182,6 +1912,8 @@ components:
     SpecifProject:
       type: object
       properties:
+        $schema:
+          $ref: '#/components/schemas/SpecifMetaSchema'
         id:
           $ref: '#/components/schemas/SpecifId'
         revision:
@@ -2194,19 +1926,31 @@ components:
           type: boolean
         generator:
           type: string
-          format: date-time
-        changedBy:
+        generatorVersion:
           type: string
-          nullable: true
+        rights:
+          $ref: '#/components/schemas/SpecifRights'
+        createdAt:
+          $ref: '#/components/schemas/SpecifDateTime'
+        createdBy:
+          $ref: '#/components/schemas/SpecifCreatedBy'
+        hierarchies:
+          description: 'Just the root nodes to limit the size; starting with these, all other elements can be requested later on.'
+          $ref: '#/components/schemas/SpecifNodes'
       additionalProperties: false
+      required:
+          - $schema
+          - id
+          - hierarchies
     SpecIF:
       type: object
       properties:
         $schema:
-          nullable: true
+          $ref: '#/components/schemas/SpecifMetaSchema'
         id:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/SpecifId'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
         title:
           $ref: '#/components/schemas/SpecifMultiLanguageText'
         description:
@@ -2215,48 +1959,41 @@ components:
           type: boolean
         generator:
           type: string
-          nullable: true
         generatorVersion:
           type: string
-          nullable: true
         rights:
-          $ref: '#/components/schemas/Rights'
+          $ref: '#/components/schemas/SpecifRights'
         createdAt:
-          type: string
-          format: date-time
+          $ref: '#/components/schemas/SpecifDateTime'
         createdBy:
-          $ref: '#/components/schemas/Creator'
+          $ref: '#/components/schemas/SpecifCreatedBy'
         dataTypes:
           type: array
           items:
-            $ref: '#/components/schemas/DataType'
-          nullable: true
+            $ref: '#/components/schemas/SpecifDataType'
         propertyClasses:
           type: array
           items:
-            $ref: '#/components/schemas/PropertyClass'
-          nullable: true
+            $ref: '#/components/schemas/SpecifPropertyClass'
         resourceClasses:
           type: array
           items:
-            $ref: '#/components/schemas/ResourceClass'
-          nullable: true
+            $ref: '#/components/schemas/SpecifResourceClass'
         statementClasses:
           type: array
           items:
-            $ref: '#/components/schemas/StatementClass'
-          nullable: true
+            $ref: '#/components/schemas/SpecifStatementClass'
         resources:
           type: array
           items:
-            $ref: '#/components/schemas/Resource'
-          nullable: true
+            $ref: '#/components/schemas/SpecifResource'
         statements:
           type: array
           items:
-            $ref: '#/components/schemas/Statement'
-          nullable: true
+            $ref: '#/components/schemas/SpecifStatement'
         hierarchies:
+          $ref: '#/components/schemas/SpecifNodes'
+        files:
           type: array
           items:
             $ref: '#/components/schemas/SpecifFile'
@@ -2284,12 +2021,13 @@ components:
           type: integer
           format: int32
           nullable: true
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/File'
+        detail:
+          type: string
           nullable: true
-      additionalProperties: false
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: {}
   securitySchemes:
     X-API-KEY:
       type: apiKey
