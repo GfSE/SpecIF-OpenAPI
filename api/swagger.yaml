@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: SpecIF Web API
   description: Web API for the Specification Integration Facility (SpecIF).
@@ -29,7 +29,6 @@ paths:
         - DataType
       summary: Creates a data type.
       requestBody:
-        description: The data type to create.
         content:
           application/json-patch+json:
             schema:
@@ -44,14 +43,25 @@ paths:
             schema:
               $ref: '#/components/schemas/DataType'
       responses:
-        '200':
-          description: Success
+        '201':
+          description: dataType created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - DataType
-      summary: Updates the data type; the supplied ID must exist.
+      summary: Update the data type; the supplied ID must exist.
       requestBody:
-        description: The data type data.
         content:
           application/json-patch+json:
             schema:
@@ -67,7 +77,15 @@ paths:
               $ref: '#/components/schemas/DataType'
       responses:
         '200':
-          description: Success
+          description: dataType updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/dataTypes/{id}:
     get:
       tags:
@@ -131,7 +149,15 @@ paths:
             nullable: true
       responses:
         '200':
-          description: Success
+          description: data type deleted.
+        '404':
+          description: Not Found
+        '409':
+          description: data type is referenced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
   /specif/v1.1/dataTypes/{id}/revisions:
     get:
       tags:
@@ -159,18 +185,18 @@ paths:
     get:
       tags:
         - File
-      summary: Returns all file descriptions for all available files in all revisions.
+      summary: Get all file descriptors.
       parameters:
-        - name: projectID
+        - name: project
           in: query
-          description: An optional project ID as filter.
+          description: Filter file descriptors by project with the given Id.
           schema:
             type: string
             description: An optional project ID as filter.
             nullable: true
       responses:
         '200':
-          description: Success
+          description: List of file descriptors returned.
           content:
             application/json:
               schema:
@@ -180,50 +206,70 @@ paths:
     post:
       tags:
         - File
-      summary: Creates a file; the supplied ID must be unique.
+      summary: Create (upload) the file; the supplied id and filename must be unique. The filename may contain a path with '/' as separators. If no id or filename is supplied, it is created before insertion. Upon upload, a SpecIF file descriptor is automatically generated.
       requestBody:
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
+                id:
+                  type: string
                 file:
                   type: string
-                  description: ''
                   format: binary
-                  nullable: true
             encoding:
               file:
                 style: form
       responses:
-        '200':
-          description: Success
+        '201':
+          description: file created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Filename exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - File
-      summary: Updates the file; the supplied ID must exist.
+      summary: Update (upload) the file; the supplied id and filename must exist. The filename may contain a path with '/' as separators. Upon upload, the SpecIF file descriptor is automatically updated. 
       requestBody:
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
+                id:
+                  type: string
                 file:
                   type: string
-                  description: ''
                   format: binary
-                  nullable: true
             encoding:
               file:
                 style: form
       responses:
         '200':
-          description: Success
+          description: file updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/files/{id}:
     get:
       tags:
         - File
-      summary: Returns a specific file.
+      summary: Get the file descriptor including the file name = relative url.
       parameters:
         - name: id
           in: path
@@ -246,26 +292,30 @@ paths:
     delete:
       tags:
         - File
-      summary: Deletes the file; the supplied ID must exist.
+      summary: Delete the file descriptor and the file; returns an error if there are referencing elements.
       parameters:
         - name: id
           in: path
           description: ''
           required: true
           schema:
-            type: string
-            description: ''
-            nullable: true
-        - name: revision
+            $ref: '#/components/schemas/SpecifId'
+        - name: forced
           in: query
-          description: ''
+          description: Query ?forced=true results in deleting all directly and indirectly referencing elements.
           schema:
-            type: string
-            description: ''
-            nullable: true
+            type: boolean
       responses:
         '200':
-          description: Success
+          description: file descriptor deleted.
+        '404':
+          description: Not Found
+        '409':
+          description: file or file descriptor is referenced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
   /specif/v1.1/files/{id}/revisions:
     get:
       tags:
@@ -297,9 +347,9 @@ paths:
       parameters:
         - name: project
           in: query
+          description: Filter hierarchies by project with the given Id.
           schema:
-            type: string
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
         - name: rootNodesOnly
           in: query
           schema:
@@ -310,9 +360,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Node'
+                $ref: '#/components/schemas/SpecifNodes'
     post:
       tags:
         - Hierarchy
@@ -324,21 +372,18 @@ paths:
           schema:
             type: string
             description: An optional parent node ID. The sub-tree will be inserted as first child.
-            nullable: true
         - name: predecessor
           in: query
           description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
           schema:
             type: string
             description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
-            nullable: true
         - name: projectId
           in: query
           description: "The project ID. If the ID is given, the new hierarchy will be added to the specific project. \r\n            Only useful for new hierarchies - no parent or predecessor given."
           schema:
             type: string
-            description: "The project ID. If the ID is given, the new hierarchy will be added to the specific project. \r\n            Only useful for new hierarchies - no parent or predecessor given."
-            nullable: true
+            description: The project ID. If the ID is given, the new hierarchy will be added to the specific project. Only useful for new hierarchies - no parent or predecessor given.
       requestBody:
         description: The hierarchy data to add.
         content:
@@ -355,8 +400,20 @@ paths:
             schema:
               $ref: '#/components/schemas/Node'
       responses:
-        '200':
-          description: Success
+        '201':
+          description: hierarchy created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - Hierarchy
@@ -368,14 +425,12 @@ paths:
           schema:
             type: string
             description: An optional parent node ID. The sub-tree will be inserted as first child.
-            nullable: true
         - name: predecessor
           in: query
           description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
           schema:
             type: string
             description: An optional predecessor node ID. The sub-tree will be inserted after the specified node.
-            nullable: true
       requestBody:
         description: ''
         content:
@@ -393,7 +448,15 @@ paths:
               $ref: '#/components/schemas/Node'
       responses:
         '200':
-          description: Success
+          description: hierarchy node updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/hierarchies/{id}:
     get:
       tags:
@@ -486,7 +549,7 @@ paths:
     get:
       tags:
         - Project
-      summary: Returns all projects; to limit the size only root properties are delivered.
+      summary: Get all projects; to limit the size only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties are delivered.
       responses:
         '200':
           description: Success
@@ -495,19 +558,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectDescriptor'
+                  $ref: '#/components/schemas/SpecifProject'
     post:
       tags:
         - Project
-      summary: "Creates a project with supplied elements; the supplied ID must be unique in the project scope. \r\nIf no ID is supplied, it is created before insertion."
-      parameters:
-        - name: integrationId
-          in: query
-          schema:
-            type: string
-            nullable: true
+      summary: Create the project; the supplied ID must be unique. If no ID is supplied, it is created before insertion. To limit the size of the request body, it is advised to send only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties at first and to post resources, statements and hierarchies subsequently.
       requestBody:
-        description: The SpecIF data defining the project.
         content:
           application/json-patch+json:
             schema:
@@ -522,14 +578,25 @@ paths:
             schema:
               $ref: '#/components/schemas/SpecIF'
       responses:
-        '200':
-          description: Success
+        '201':
+          description: project created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - Project
-      summary: Updates a project with the given ID by including the data into an existing project. The project with the supplied ID must exist.
+      summary: Update the project; the supplied ID must exist. To limit the size of the request body, it is advised to send only dataTypes, propertyClasses, resourceClasses, statementClasses and hierarchy root properties at first and to post resources, statements and hierarchies subsequently. Any existing elements will be updated, any additional elements will be created and any missing elements will be deleted.
       requestBody:
-        description: The SpecIF data to include.
         content:
           application/json-patch+json:
             schema:
@@ -545,7 +612,15 @@ paths:
               $ref: '#/components/schemas/SpecIF'
       responses:
         '200':
-          description: Success
+          description: project updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/projects/{id}:
     get:
       tags:
@@ -636,227 +711,49 @@ paths:
             schema:
               $ref: '#/components/schemas/PropertyClass'
       responses:
-        '200':
-          description: Success
+        '201':
+          description: property class created
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PropertyClass'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - PropertyClass
-      summary: Updates the property class; the supplied ID must exist.
-      parameters:
-        - name: dataType.iD
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.revision
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.serviceName
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.serviceAddress
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.servicePort
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: dataType.dataSource.serviceDescription
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.serviceNativeAccess
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.serviceKind
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.iconURL
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.iD
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataType.dataSource.metadataRead
-          in: query
-          schema:
-            type: boolean
-        - name: dataType.dataSource.metadataWrite
-          in: query
-          schema:
-            type: boolean
-        - name: dataType.dataSource.dataRead
-          in: query
-          schema:
-            type: boolean
-        - name: dataType.dataSource.dataWrite
-          in: query
-          schema:
-            type: boolean
-        - name: dataType.dataSource.tags
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-            nullable: true
-        - name: multiple
-          in: query
-          schema:
-            type: boolean
-            nullable: true
-        - name: format
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: unit
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: values
-          in: query
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/Value'
-            nullable: true
-        - name: title
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: description
-          in: query
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MultilanguageText'
-            nullable: true
-        - name: projectID
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: changedAt
-          in: query
-          schema:
-            type: string
-            format: date-time
-        - name: changedBy
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: id
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: iD
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: revision
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: replaces
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-            nullable: true
-        - name: dataSource.serviceName
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.serviceAddress
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.servicePort
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: dataSource.serviceDescription
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.serviceNativeAccess
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.serviceKind
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.iconURL
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.iD
-          in: query
-          schema:
-            type: string
-            nullable: true
-        - name: dataSource.metadataRead
-          in: query
-          schema:
-            type: boolean
-        - name: dataSource.metadataWrite
-          in: query
-          schema:
-            type: boolean
-        - name: dataSource.dataRead
-          in: query
-          schema:
-            type: boolean
-        - name: dataSource.dataWrite
-          in: query
-          schema:
-            type: boolean
-        - name: dataSource.tags
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-            nullable: true
+      summary: Update the property class; the supplied ID must exist.
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SpecifPropertyClass'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecifPropertyClass'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/SpecifPropertyClass'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/SpecifPropertyClass'
       responses:
         '200':
-          description: Success
+          description: property class updated
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/propertyClasses/{id}:
     get:
       tags:
@@ -926,7 +823,15 @@ paths:
             nullable: true
       responses:
         '200':
-          description: Success
+          description: property class deleted.
+        '404':
+          description: Not Found
+        '409':
+          description: property class is referenced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
   /specif/v1.1/propertyClasses/{id}/revisions:
     get:
       tags:
@@ -956,13 +861,16 @@ paths:
         - Resource
       summary: Returns all resources with all available revisions.
       parameters:
-        - name: projectID
+        - name: project
           in: query
-          description: An optional project ID. The endpoint then returns only resources for the given project.
+          description: Filter resources by project with the given Id.
           schema:
-            type: string
-            description: An optional project ID. The endpoint then returns only resources for the given project.
-            nullable: true
+            $ref: '#/components/schemas/SpecifId'
+        - name: class
+          in: query
+          description: Filter resources belonging to a class with the given Id.
+          schema:
+            $ref: '#/components/schemas/SpecifKey'
       responses:
         '200':
           description: Success
@@ -985,7 +893,6 @@ paths:
             description: The optional project ID. If a project ID is not given, the data is added to a default project.
             nullable: true
       requestBody:
-        description: The resource data.
         content:
           application/json-patch+json:
             schema:
@@ -1001,17 +908,24 @@ paths:
               $ref: '#/components/schemas/Resource'
       responses:
         '201':
-          description: Success
+          description: resource created
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - Resource
-      summary: Updates a resource. The ID included in the resource data must exist.
+      summary: Update the resource; the supplied ID must exist.
       requestBody:
-        description: ''
         content:
           application/json-patch+json:
             schema:
@@ -1031,7 +945,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/resources/{id}:
     get:
       tags:
@@ -1089,7 +1005,15 @@ paths:
             nullable: true
       responses:
         '200':
-          description: Success
+          description: resource deleted.
+        '404':
+          description: Not Found
+        '409':
+          description: resource is referenced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
   /specif/v1.1/resources/{id}/revisions:
     get:
       tags:
@@ -1112,12 +1036,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource'
+                  $ref: '#/components/schemas/SpecifResource'
+        '404':
+          description: Not Found
+  /specif/v1.1/resources/{id}/statements:
+    get:
+      tags:
+        - Resource
+      summary: Get all statements of the resource.
+      parameters:
+        - name: id
+          in: path
+          description: The resource ID.
+          required: true
+          schema:
+            $ref: '#/components/schemas/SpecifId'
+      responses:
+        '200':
+          description: All statements of the resource returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpecifStatement'
+        '404':
+          description: Not Found
   /specif/v1.1/resourceClasses:
     get:
       tags:
         - ResourceClass
-      summary: Returns all resource classes with all available revisions.
+      summary: Get all resource classes.
       responses:
         '200':
           description: Success
@@ -1144,7 +1093,6 @@ paths:
         - ResourceClass
       summary: Creates a new resource class.
       requestBody:
-        description: The resource class data.
         content:
           application/json-patch+json:
             schema:
@@ -1159,18 +1107,25 @@ paths:
             schema:
               $ref: '#/components/schemas/ResourceClass'
       responses:
-        '200':
-          description: Success
+        '201':
+          description: resource class created
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceClass'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - ResourceClass
-      summary: "Updates a resource class.\r\nThe subjected ID must exist."
+      summary: Update the resource class; the supplied ID must exist.
       requestBody:
-        description: The statement class data.
         content:
           application/json-patch+json:
             schema:
@@ -1190,7 +1145,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceClass'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/resourceClasses/{id}:
     get:
       tags:
@@ -1253,7 +1210,15 @@ paths:
             nullable: true
       responses:
         '200':
-          description: Success
+          description: resource class deleted.
+        '404':
+          description: Not Found
+        '409':
+          description: resource class is referenced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
   /specif/v1.1/resourceClasses/{id}/revisions:
     get:
       tags:
@@ -1295,41 +1260,31 @@ paths:
         - Statement
       summary: "Returns all statements with all available revisions.\r\nWith the optional project ID only the statements for the project are returned."
       parameters:
-        - name: projectID
+        - name: project
           in: query
-          description: The optional project ID to filter statements by project.
+          description: Filter statements by project with the given Id.
           schema:
-            type: string
-            description: The optional project ID to filter statements by project.
-            nullable: true
-        - name: subjectID
+            $ref: '#/components/schemas/SpecifId'
+        - name: class
           in: query
-          description: The optional subject ID to filter statements only sourcing the element with the given ID.
+          description: Filter statements belonging to a class with the given Id.
           schema:
-            type: string
-            description: The optional subject ID to filter statements only sourcing the element with the given ID.
-            nullable: true
-        - name: subjectRevision
+            $ref: '#/components/schemas/SpecifKey'
+        - name: element
           in: query
-          description: An optional subject revision. Only useful together with subject ID.
+          description: Filter statements where the element with the given Id is a subject or an object.
           schema:
-            type: string
-            description: An optional subject revision. Only useful together with subject ID.
-            nullable: true
-        - name: objectID
+            $ref: '#/components/schemas/SpecifKey'
+        - name: subject
           in: query
-          description: The optional object ID to filter statements only targeting the element with the given ID.
+          description: Filter statements where the element with the given Id is a subject.
           schema:
-            type: string
-            description: The optional object ID to filter statements only targeting the element with the given ID.
-            nullable: true
-        - name: objectRevision
+            $ref: '#/components/schemas/SpecifKey'
+        - name: object
           in: query
-          description: An optional object revision. Only useful together with object ID.
+          description: Filter statements where the element with the given Id is an object.
           schema:
-            type: string
-            description: An optional object revision. Only useful together with object ID.
-            nullable: true
+            $ref: '#/components/schemas/SpecifKey'
       responses:
         '200':
           description: Success
@@ -1344,7 +1299,6 @@ paths:
         - Statement
       summary: Creates a statement; the supplied ID must be unique in the project scope.
       requestBody:
-        description: The statement to create.
         content:
           application/json-patch+json:
             schema:
@@ -1364,19 +1318,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Statement'
-        '400':
-          description: Bad Request
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - Statement
-      summary: Updates a new statement. If a statement with the given ID is existant, a new revision is created automatically.
+      summary: Update the statement; the supplied ID must exist.
       requestBody:
-        description: The statement to update.
         content:
           application/json-patch+json:
             schema:
@@ -1402,7 +1355,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/statements/{id}:
     get:
       tags:
@@ -1527,7 +1482,6 @@ paths:
         - StatementClass
       summary: Creates a new statement class.
       requestBody:
-        description: The statement class data.
         content:
           application/json-patch+json:
             schema:
@@ -1542,18 +1496,25 @@ paths:
             schema:
               $ref: '#/components/schemas/Resource'
       responses:
-        '200':
-          description: Success
+        '201':
+          description: statement class created
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StatementClass'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '409':
+          description: Identifier exists already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
     put:
       tags:
         - StatementClass
-      summary: "Updates a statement class.\r\nThe supplied ID must exist."
+      summary: Update the statement class; the supplied ID must exist.
       requestBody:
-        description: The statement class data.
         content:
           application/json-patch+json:
             schema:
@@ -1573,7 +1534,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StatementClass'
+                $ref: '#/components/schemas/HttpStatusDetails'
+        '404':
+          description: Not Found
   /specif/v1.1/statementClasses/{id}:
     get:
       tags:
@@ -1636,7 +1599,15 @@ paths:
             nullable: true
       responses:
         '200':
-          description: Success
+          description: statement class deleted.
+        '404':
+          description: Not Found
+        '409':
+          description: statement class is referenced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpStatusDetails'
   /specif/v1.1/statementClasses/{id}/revisions:
     get:
       tags:
@@ -1662,7 +1633,65 @@ paths:
                   $ref: '#/components/schemas/StatementClass'
 components:
   schemas:
-    MultilanguageText:
+    SpecifId:
+      description: "A globally unique identifier."
+      type: string
+      pattern: "^[_a-zA-Z]{1}[_a-zA-Z0-9.-]*$"
+    SpecifRevision:
+      description: "A globally unique revision tag with one or multiple blocks with alphanumeric characters separated by a special character [.:,;/-]. Sequential as well as branching/merging notations are possible."
+      type: string
+      pattern: "^(?:[0-9a-zA-Z]+[.:,;\/-])*[0-9a-zA-Z]+$"
+    SpecifReplaces:
+      description: "For change and configuration management; the first revision has 0 entries, a simple modification has 1 entry and the result of a merge has 2 entries."
+      type: array
+      maxItems: 2
+      uniqueItems: true
+      items:
+        $ref: "#/components/SpecifRevision"
+    SpecifKey:
+      description: "A key for a particular revision of an identifiable item, e.g. of a resource. A key consists of a globally unique identifier and a revision. No or an undefined revision means the latest revision of the identified item."
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SpecifId'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+      additionalProperties: false
+      required:
+        - id
+    SpecifKeys:
+      description: "A list of keys referencing items such as propertyClasses, resourceClasses or statementClasses; any list must have >0 entries including those of any parent element."
+      type: array
+      uniqueItems: true
+      items:
+        $ref: "#/components/SpecifKey"
+    SpecifAlternativeId:
+      description: "A list of pointers to resources resp. statements which have been merged to this one."
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SpecifId'
+        revision:
+          $ref: '#/components/schemas/SpecifRevision'
+        project:
+          $ref: '#/components/schemas/SpecifId'
+      additionalProperties: false
+      required:
+        - id
+    SpecifAlternativeIds:
+      description: "The list of consolidated items to be used in case a consolidated item shall be updated."
+      type: array
+      uniqueItems: true
+      items:
+        $ref: "#/components/SpecifAlternativeId"
+    SpecifText:
+      type: string
+    SpecifTextFormat:
+      type: string
+      enum: 
+        - plain
+        - xhtml
+    SpecifLanguageText:
       type: object
       properties:
         text:
@@ -1675,7 +1704,25 @@ components:
           type: string
           nullable: true
       additionalProperties: false
-    EnumerationValue:
+      required:
+        - text
+    SpecifMultiLanguageText:
+      type: array
+      items:
+        $ref: '#/components/schemas/SpecifLanguageText'
+    SpecifValue:
+      description: "First option for properties with dataType 'xs:string', second option for all others. Note that SpecIF represents *all* values including number and boolean as string."
+      oneOf:
+        - $ref: "#/components/SpecifMultiLanguageText"
+        - type: string
+    SpecifValues:
+      description: "If 'multiple' of the propertyClass is undefined or false, the array must contain one item. If the value is unknown, omit the whole property. By default, the class' value applies."
+      type: array
+      minItems: 1
+      uniqueItems: true
+      items:
+        $ref: '#/components/schemas/SpecifValue'
+    SpecifEnumeratedValue:
       type: object
       properties:
         id:
@@ -2006,10 +2053,31 @@ components:
           type: string
           nullable: true
       additionalProperties: false
-    StatementClass:
+      required:
+        - id
+        - resource
+        - changedAt
+    SpecifNodes:
+      description: "A list of pointers to resources; may be nested forming a tree, i.e. a hierarchy of pointers."
+      type: array
+      uniqueItems: true
+      items:
+        $ref: "#/components/schemas/SpecifNode"
+    SpecifHierarchyDepth:
+      description: The number of hierarchy levels.
+      type: integer
+      format: int32
+    SpecifFile:
       type: object
       properties:
         id:
+          $ref: '#/components/schemas/SpecifId'
+        title:
+          type: string
+        description:
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
+        url:
+          description: "An absolute or relative URL to the file; will be of format 'uri-reference' in future. If missing, the title applies."
           type: string
           nullable: true
         title:
@@ -2105,36 +2173,26 @@ components:
           type: string
           nullable: true
       additionalProperties: false
-    Statement:
+      required:
+        - email
+    SpecifMetaSchema:
+      type: string
+      format: uri
+      pattern: "^https?:\\/\\/(specif\\.de\\/v1\\.1\\/schema|json\\.schemastore\\.org\\/specif-1\\.1)\\.json$"
+    SpecifProject:
       type: object
       properties:
         id:
-          type: string
-          nullable: true
-        class:
-          $ref: '#/components/schemas/Key'
-        properties:
-          type: array
-          items:
-            $ref: '#/components/schemas/Property'
-          nullable: true
+          $ref: '#/components/schemas/SpecifId'
         revision:
-          type: string
-          nullable: true
-        replaces:
-          type: array
-          items:
-            type: string
-          nullable: true
-        alternativeIds:
-          type: array
-          items: {}
-          nullable: true
-        subject:
-          $ref: '#/components/schemas/Key'
-        object:
-          $ref: '#/components/schemas/Key'
-        changedAt:
+          $ref: '#/components/schemas/SpecifRevision'
+        title:
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
+        description:
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
+        isExtension:
+          type: boolean
+        generator:
           type: string
           format: date-time
         changedBy:
@@ -2150,15 +2208,9 @@ components:
           type: string
           nullable: true
         title:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         description:
-          type: array
-          items:
-            $ref: '#/components/schemas/MultilanguageText'
-          nullable: true
+          $ref: '#/components/schemas/SpecifMultiLanguageText'
         isExtension:
           type: boolean
         generator:
@@ -2207,7 +2259,30 @@ components:
         hierarchies:
           type: array
           items:
-            $ref: '#/components/schemas/Node'
+            $ref: '#/components/schemas/SpecifFile'
+      additionalProperties: false
+      required:
+          - $schema
+          - id
+          - dataTypes
+          - propertyClasses
+          - resourceClasses
+          - statementClasses
+          - resources
+          - statements
+          - hierarchies
+    HttpStatusDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
           nullable: true
         files:
           type: array
